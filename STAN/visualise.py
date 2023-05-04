@@ -2,7 +2,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 from scipy.signal import welch
 
-import vars
+from LCP_Project.STAN import vars
 
 # retrieve the necessary variables separately
 def init(inference):
