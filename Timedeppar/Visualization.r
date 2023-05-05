@@ -69,16 +69,19 @@ plot_diff <- function(data){
     return()
 }
 
-plot_chain<-function(par_inf){
+plot_chain<-function(par_inf,par){
 
 	
 	l <-length(par_inf)
 	x_chain<-seq(1,l,1)
 
-
-	options(repr.plot.width = 15, repr.plot.height = 5)
-
-	plot(x_chain,par_inf)
+    par(mar = c(5.1, 6.1, 4.1, 2.1))
+	options(repr.plot.width = 21, repr.plot.height = 5)
+	plot(x_chain,par_inf,xlab = "Chain", ylab = par, main = "Markov Chain" ,
+         xlim = c(0, 850), pch=19,
+          col = col_blue,
+         cex.main = 2, cex.lab = 1.7, cex.axis = 1.5
+        )
 	
 	
 }
