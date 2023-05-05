@@ -27,11 +27,16 @@ parameters {
 
 
 model {
-    // try with normal
+
     mean ~ normal(1,0.1);
     sd ~ uniform(0, 10);
     tau ~ uniform(1, 200);
     sigma_y ~ uniform(0, 10);
+    
+    A ~ normal(10, 1);
+    phi ~ normal(2, 0.1);
+    
+    
    
     t[1] ~ normal(1, 0.01);
     t[2] ~ normal(t[1] + mean, sd);
