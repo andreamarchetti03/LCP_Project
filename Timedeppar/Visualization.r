@@ -58,8 +58,13 @@ plot_diff <- function(data){
 
     options(repr.plot.width = 15, repr.plot.height = 5)
 
+<<<<<<< Updated upstream
     plot(data$t, data$xi_inf, main = expression(bold(symbol(x)[i] ~inferred)), 
          xlab = "t", ylab = expression(symbol(x)[i]), 
+=======
+    plot(data$t, data$xi_inf, main = "Xi_inf", 
+         xlab = "t", ylab = "Xi", 
+>>>>>>> Stashed changes
          xlim = c(0, 500),
          type = 'o', lty = 1, lwd = 2, col = col_blue,
          cex.main = 2, cex.lab = 1.7, cex.axis = 1.5)  
