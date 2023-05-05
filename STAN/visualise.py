@@ -74,7 +74,7 @@ def time_diff(inference, from_, to_):
 
 	xi = t_mean[:-1] - t_mean[1:]
 
-	fig, ax = plt.subplots(1,2, figsize=(15,6))
+	fig, ax = plt.subplots(1,2, figsize=(15,5))
 	
 	ax[0].scatter(year, dif)
 	ax[0].set_title("Original Time - Inferred Time")
@@ -104,7 +104,7 @@ def PSD(inference):
 	freqs_corr, pow_corr = welch(y, fs=sampling_freq)#, nperseg=1024)
 	
 	# Plot the PSD
-	fig, (ax1, ax2) = plt.subplots(1,2, figsize=(15,6))
+	fig, (ax1, ax2) = plt.subplots(1,2, figsize=(15,5))
 	
 	ax1.semilogy(freqs_, pow_)
 	ax1.set_xlabel('Frequency [Hz]')
@@ -151,7 +151,7 @@ def chains(inference, sparam):
 
 	param_chains = split(param, vars.n_chains)
 	
-	fig, ax = plt.subplots(1,1, figsize=(8,6))
+	fig, ax = plt.subplots(1,1, figsize=(6,4))
 	
 	ax.set_title(sparam)
 	ax.set_xlabel("Iteration")
