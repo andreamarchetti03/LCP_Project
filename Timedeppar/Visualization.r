@@ -30,14 +30,21 @@ plot_inf <- function(data){
     par(mar = c(5.1, 6.1, 4.1, 2.1))
     plot(data$t, data$y_obs, main = "Observed and Inferred data", 
          xlab = "t", ylab = expression(y[obs]), 
-         xlim = c(0, 500), ylim = c(-12, 12),
+         xlim = c(0, 600), ylim = c(-12, 12),
          type = 'l', lty = 1, lwd = 2, col = col_blue,
          cex.main = 2, cex.lab = 1.7, cex.axis = 1.5)
 
     lines(data$t_inf, data$y_obs,   
          type = 'l', lty = 1, lwd = 2, col = col_red,
          cex.main = 2, cex.lab = 1.7, cex.axis = 1.5)
-
+    legend(x = 500,
+       y= 5,
+       col = c(col_blue, col_red),
+       lty = c(1,1),
+       lwd = c(2,2),
+       cex=1,
+       bty="n",
+       legend = c('Observed data ', 'Inferred data '))
     grid(nx = NULL, ny = NULL,
             lty = 2, col = col_grey, lwd = 2)
     
