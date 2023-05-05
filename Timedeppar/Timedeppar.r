@@ -171,7 +171,7 @@ inference <- function(name){
     df$t_diff <- df$t - df$t_inf
     
     # Combine the results into a list
-    return_list <- list(df = df, df_inf = df_inf, A_inf = A_inf, ph_inf = ph_inf, sigma_y_inf = sigma_y_inf)
+    return_list <- list(df = df, df_inf = df_inf, A_inf = A_inf, ph_inf = ph_inf, sigma_y_inf = sigma_y_inf, inf=inf)
       
     return(return_list)
     

@@ -68,3 +68,17 @@ plot_diff <- function(data){
     
     return()
 }
+
+plot_chain<-function(par_inf){
+
+	
+	l <-length(par_inf)
+	x_chain<-seq(1,l,1)
+
+
+	options(repr.plot.width = 15, repr.plot.height = 5)
+
+	plot(x_chain,par_inf)
+	
+	
+}
