@@ -16,8 +16,8 @@ plt.rcParams['ytick.labelsize'] = 8
 from statsmodels.graphics.tsaplots import plot_acf
 from scipy.signal import welch
 
-import stan_code
-import vars
+from LCP_Project.STAN import stan_code
+from LCP_Project.STAN import vars
 
 
 
