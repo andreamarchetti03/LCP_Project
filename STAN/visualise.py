@@ -54,10 +54,15 @@ def signal(inference, from_, to_):
 	y = A*np.cos(2*np.pi * vars.freq * t_mean + phi)
 	
 	# denoised signal
-	plt.plot(t_mean[from_:to_],y[from_:to_],color="red")
+	plt.plot(t_mean[from_:to_],y[from_:to_],color="red", label="denoised")
 	
 	# original signal
-	plt.plot(year[from_:to_],cycle[from_:to_],color="blue")
+	plt.plot(year[from_:to_],cycle[from_:to_],color="blue", label="original")
+	
+	plt.title("Signal")
+	plt.xlabel("Year")
+	plt.ylabel("Quantity")
+	plt.legend()
 	plt.show()
 	
 
@@ -65,9 +70,12 @@ def time_diff(inference, from_, to_):
 
 	fit, year, t_mean, cycle = init(inference)
 	
-	dif  = t_mean - year
+	dif  = year - t_mean
 
 	plt.scatter(year[from_:to_],dif[from_:to_])
+	plt.title("Time differences")
+	plt.xlabel("Year")
+	plt.ylabel("Delta time")
 	plt.show()
 	
 
@@ -93,10 +101,12 @@ def PSD(inference):
 	ax1.semilogy(freqs_, pow_)
 	ax1.set_xlabel('Frequency [Hz]')
 	ax1.set_ylabel('PSD [V**2/Hz]')
+	ax1.set_title("Original")
 	
 	ax2.semilogy(freqs_corr, pow_corr)
 	ax2.set_xlabel('Frequency [Hz]')
 	ax2.set_ylabel('PSD [V**2/Hz]')
+	ax2.set_title("Denoised")
 	
 	plt.show()
 
@@ -133,10 +143,15 @@ def chains(inference, sparam):
 
 	param_chains = split(param, vars.n_chains)
 	
-	fig, ax = plt.subplots(1,1, figsize=(15,7))
+	fig, ax = plt.subplots(1,1, figsize=(8,6))
+	
+	ax.set_title(sparam)
+	ax.set_xlabel("Iteration")
+	ax.set_ylabel("Value")
 	
 	for i in range(0,vars.n_chains):
 	    
 	    ax.scatter(np.arange(0,vars.n_sample), param_chains[i])
+	    
 	
 	

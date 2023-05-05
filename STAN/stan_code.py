@@ -15,10 +15,10 @@ parameters {
     ordered[n] t;
 
     real<lower=0> mean;
-    real<lower=0, upper=1> sd;
+    real<lower=0, upper=10> sd;
     real<lower=0, upper=200> tau;
 
-    real<lower=0, upper=1> sigma_y;
+    real<lower=0, upper=10> sigma_y;
 
     real<lower=0> A;
     real phi;
@@ -29,7 +29,7 @@ parameters {
 model {
     // try with normal
     mean ~ normal(1,0.1);
-    sd ~ uniform(0, 1);
+    sd ~ uniform(0, 10);
     tau ~ uniform(1, 200);
     sigma_y ~ uniform(0, 10);
    
