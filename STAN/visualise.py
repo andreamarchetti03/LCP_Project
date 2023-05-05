@@ -72,12 +72,20 @@ def time_diff(inference, from_, to_):
 	
 	dif  = year - t_mean
 
-	plt.scatter(year[from_:to_],dif[from_:to_])
-	plt.title("Time differences")
-	plt.xlabel("Year")
-	plt.ylabel("Delta time")
-	plt.show()
+	xi = t_mean[:-1] - t_mean[1:]
+
+	fig, ax = plt.subplots(1,2, figsize=(15,6))
 	
+	ax[0].scatter(year, dif)
+	ax[0].set_title("Original Time - Inferred Time")
+	ax[0].set_xlabel("Year")
+	ax[0].set_ylabel("Delta t")
+	
+	ax[1].scatter(year[:-1], xi)
+	ax[1].set_title("Inferred Xi's")
+	ax[1].set_xlabel("Year")
+	ax[1].set_ylabel("Delta t")
+		
 
 def PSD(inference):
 
