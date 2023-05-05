@@ -57,6 +57,7 @@ plot_diff <- function(data){
          type = 'o', lty = 1, lwd = 2, col = col_blue,
          cex.main = 2, cex.lab = 1.7, cex.axis = 1.5)
 
+
     options(repr.plot.width = 15, repr.plot.height = 5)
     par(mar = c(5.1, 6.1, 4.1, 2.1))
     plot(data$t, data$xi_inf, main = expression(bold(symbol(x)[i] ~inferred)), 
