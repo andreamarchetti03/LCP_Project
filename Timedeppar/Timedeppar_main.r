@@ -9,14 +9,14 @@ library(invgamma)
 seed = 12345
 
 
+
 # define observational likelihood
 loglikeli <- function(param, data) {
 
     # get parameter xi at time points of observations
+	
     sigma_y <- param$sigma_y
-    A <- param$A
-    ph<-param$ph
-    
+	
     xi<-param$xi
     
 
@@ -26,16 +26,17 @@ loglikeli <- function(param, data) {
 
     # corrupted time
     
-    t_corr <- rep(0, n)
+    t_corr <- rep(0, n_main)
     t_corr[1] <- 1
-    for (i in 2:n) {
+    for (i in 2:n_main) {
             t_corr[i] <- t_corr[i-1] + xi[i]
     }
 
     # corrupted model
     y_corr <- rep(0, length(t_corr))
-    
-    y_corr <- y_corr + A*cos(2*pi*freq*t_corr + ph)
+	
+    for (j in 1:n_cycle)
+		y_corr <- y_corr + param[[paste0('A.',i)]]*cos(2*pi*freq_c[j]*t_corr + param[[paste0('ph.',i)]])
 
 
     # calculate likelihood
@@ -65,8 +66,6 @@ logprior_const <- function(param_const) {
 
     # calculate priors
     log_prior_sigma_y <- dunif(param_const[['sigma_y']], min = 0, max = 1, log = T)
-	log_prior_sigma_y <- dnorm(param_const[['A']], mean = 10, sd = 1, log = T)
-	log_prior_sigma_y <- dnorm(param_const[['ph']], mean = 2, sd = 0.1, log = T)
 
     # return result
     return(log_prior_sigma_y)
@@ -80,23 +79,68 @@ logprior_const <- function(param_const) {
 inference <- function(name){
     
     #Read data
+	
     file <- paste(name,'.txt', sep='')
 	file_str <- paste('Data/',file,sep='')
     df <- read.csv(file_str, header = T, sep = '\t')
-    df = df[1:n,]
+    df = df[1:n_main,]
+	
+	#Shift data around 0 
+	mean_y = mean(df$y_obs)
+	df$y_obs = df$y_obs - mean_y
+	
     
     #Inizialization of parameters
-    df$init <- rep(1, length(df$t))
+    df$init <- rep(10, length(df$t))
     'xi' = df[,c('t','init')]       #It could also be a randOU sequence..
-    param_init <- list( 'xi' = xi ,'sigma_y' = 0.5, 'A'= 10, 'ph'= 2)
+	
     
-    #Define range of parameters
-    param_range <- list('sigma_y' = c(0,1), 'A' = c(0,20), 'ph' = c(0,2*pi))
     
-    param_range <- c(param_range)
+	
+	# A parameters
+	A <- NULL
+	for (i in 1:n_cycle) {
+		param <- df_cycle[['A']][i]
+		names(param) <- paste0('A.',i)
+		A <- append(A, param) 
+	}
+
+	# ph parameters
+	ph <- NULL
+	for (i in 1:n_cycle) {
+		param <- df_cycle[['ph']][i]
+		names(param) <- paste0('ph.',i)
+		ph <- append(ph, param) 
+	}
+	
+	
+	param_init <- list( 'xi' = xi ,'sigma_y' = 0.5)
+	param_init <- c(param_init, A, ph)
+	
+	
+    # ranges of constant parameters
+	param_range <- list('sigma_y' = c(0,1))
+
+	# A parameters range
+	A_range <- NULL
+	for (i in 1:n_cycle) {
+		par_range <-  list(c(0,3))
+		names(par_range) <- paste0('A.',i)
+		A_range <- append(A_range, par_range) 
+	}
+
+	# ph parameters range
+	ph_range <- NULL
+	for (i in 1:n_cycle) {
+		par_range <- list(c(0,2*pi))
+		names(par_range) <- paste0('ph.',i)
+		ph_range <- append(ph_range, par_range) 
+	}
+
+	param_range <- c(param_range, A_range, ph_range)
     
     # choose model parameters:
-    xi_mean <- 1
+    xi_mean <- 10
     xi_sd <- 0.1
     xi_gamma <- 1/200
     
@@ -125,43 +169,46 @@ inference <- function(name){
     df_inf_ou <- as.data.frame(inf$sample.param.ou[seq(start, end, th),])
     df_inf_const <- as.data.frame(inf$sample.param.const[seq(start, end, th),])
     df_inf_xi <- as.data.frame(inf$sample.param.timedep[[1]][seq(start+1, end+1, th),])
+	
+	
     #Name xi sequence
-    names(df_inf_xi) <- paste0(rep('xi.', n), as.character(seq(1, n)))
+    names(df_inf_xi) <- paste0(rep('xi.', n_main), as.character(seq(1, n_main)))
     df_inf <- cbind(df_inf_ou, df_inf_const, df_inf_xi)
     
     
     #Function to infer mean of parameters from results file
 
-    infer_par <- function(name, data) {
+    infer_par <- function(names, data) {
+	
+		par_inf <- NULL
 
-    par_inf <- NULL
+		for (name in names) {
+			param <- quantile(data[[name]], probs = 0.5)
+			names(param) <- name
+			par_inf <- append(par_inf, param)
+		}
 
-    par <- quantile(data[[name]], probs = 0.5)
-    names(par) <- name
-    par_inf <- append(par_inf, par)
+		return(par_inf)
 
-    return(par_inf)
+
     }
     
     #Ingferred parameters
 
-    A_inf = infer_par('A', df_inf)
+    # A inferred parameters
+	A_inf = infer_par(names(A)[1:n_cycle], df_inf)
 
-    sigma_y_inf = infer_par('sigma_y', df_inf)
+	# ph inferred parameters
+	ph_inf = infer_par(names(ph)[1:n_cycle], df_inf)
 
-    ph_inf = infer_par('ph', df_inf)
+	# xi parameters
+    xi_inf = infer_par(paste('xi.',i,sep=''), df_inf)
 
-
-    xi_inf <- rep(0, 500)
-
-    for (i in 1:500) 
-        xi_inf[i] = infer_par(paste('xi.',i,sep=''), df_inf)
-
-    t_inf <- rep(1,500)
+    t_inf <- rep(1,n_main)
 
     t_inf[1]=xi_inf[1]
 
-    for (i in 2:500)
+    for (i in 2:n_main)
         t_inf[i]=t_inf[i-1]+xi_inf[i]
     
     df$xi_inf <- xi_inf
@@ -171,9 +218,12 @@ inference <- function(name){
     names(df$t_inf)= 't_inf'
 
     df$t_diff <- df$t - df$t_inf
+	
+	print(A_inf)
+	print(df_inf)
     
     # Combine the results into a list
-    return_list <- list(df = df, df_inf = df_inf, A_inf = A_inf, ph_inf = ph_inf, sigma_y_inf = sigma_y_inf, inf=inf)
+    return_list <- list(df = df, df_inf = df_inf, A_inf = A_inf, ph_inf, ph_inf,  inf=inf) #sigma_y left to infer
       
     return(return_list)
     
