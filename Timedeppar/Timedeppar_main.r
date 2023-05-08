@@ -238,7 +238,7 @@ inference <- function(name){
 	print(df)
     
     # Combine the results into a list
-    return_list <- list(df = df, df_inf = df_inf, A_inf = A_inf, ph_inf, ph_inf,  inf=inf) #sigma_y left to infer
+    return_list <- list(df = df, df_inf = df_inf, A_inf = A_inf, ph_inf= ph_inf,  inf=inf) #sigma_y left to infer
       
     return(return_list)
     
