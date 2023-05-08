@@ -17,19 +17,22 @@ from statsmodels.graphics.tsaplots import plot_acf
 from scipy.signal import welch
 
 from LCP_Project.STAN import stan_code
-from LCP_Project.STAN import vars
+from LCP_Project.STAN import vars_real
 
-
+#import vars_real
 
 def infer(file_name):
 
-	freq = vars.freq
-	dt = vars.dt
-	
+	N_waves = len(vars_real.periods)
+	frequencies = 1./(vars_real.periods) 
+	amplitudes = vars_real.amplitudes
+	phases = vars_real.phases
+	dt = vars_real.dt
+
 	# sample from the model
-	n_chains = vars.n_chains
-	n_warmup = vars.n_warmup
-	n_sample = vars.n_sample
+	n_chains = vars_real.n_chains
+	n_warmup = vars_real.n_warmup
+	n_sample = vars_real.n_sample
 	
 	code = stan_code.code
 	
