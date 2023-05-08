@@ -26,9 +26,9 @@ plot_obs <- function(data){
 # Plot inferred data on top of original observed data
 plot_inf <- function(data){
     
-    options(repr.plot.width = 15, repr.plot.height = 5)
+    options(repr.plot.width = 15, repr.plot.height = 10)
     par(mar = c(5.1, 6.1, 4.1, 2.1))
-    plot(data$t, data$y_obs, main = "Observed and Inferred data", 
+    plot(data$t, data$y_obs, main = "Observed and Inferred times", 
          xlab = "t", ylab = expression(y[obs]), 
          xlim = c(0, n_main*10), ylim = c(-8, 8),
          type = 'l', lty = 1, lwd = 2, col = col_blue,
@@ -36,6 +36,16 @@ plot_inf <- function(data){
 
     lines(data$t_inf, data$y_obs,   
          type = 'l', lty = 1, lwd = 2, col = col_red,
+         cex.main = 2, cex.lab = 1.7, cex.axis = 1.5)
+		 
+	plot(data$t, data$y_obs, main = "Denoised data", 
+         xlab = "t", ylab = expression(y[obs]), 
+         xlim = c(0, n_main*10), ylim = c(-8, 8),
+         type = 'l', lty = 1, lwd = 2, col = col_blue,
+         cex.main = 2, cex.lab = 1.7, cex.axis = 1.5)
+		 
+	lines(data$t_inf, data$y_d,   
+         type = 'l', lty = 1, lwd = 4, col = col_red,
          cex.main = 2, cex.lab = 1.7, cex.axis = 1.5)
 
     grid(nx = NULL, ny = NULL,
@@ -48,12 +58,12 @@ plot_inf <- function(data){
 #Plot time difference and xi_inf
 plot_diff <- function(data){
     
-   options(repr.plot.width = 15, repr.plot.height = 5)
+   options(repr.plot.width = 15, repr.plot.height = 10)
    par(mar = c(5.1, 6.1, 4.1, 2.1))
 
     plot(data$t, data$t_diff, main = "Time difference", 
          xlab = "t", ylab = "Diff", 
-         xlim = c(0, n_main),
+         xlim = c(0, n_main*10),
          type = 'o', lty = 1, lwd = 2, col = col_blue,
          cex.main = 2, cex.lab = 1.7, cex.axis = 1.5)
 
@@ -62,7 +72,7 @@ plot_diff <- function(data){
     par(mar = c(5.1, 6.1, 4.1, 2.1))
     plot(data$t, data$xi_inf, main = expression(bold(symbol(x)[i] ~inferred)), 
          xlab = "t", ylab = expression(symbol(x)[i]), 
-         xlim = c(0, n_main),type = "l" ,
+         xlim = c(0, n_main*10),type = "l" ,
           lty = 1, lwd = 4, col = col_blue,
          cex.main = 2, cex.lab = 1.7, cex.axis = 1.5)  
     

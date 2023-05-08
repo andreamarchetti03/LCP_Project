@@ -27,7 +27,7 @@ loglikeli <- function(param, data) {
     # corrupted time
     
     t_corr <- rep(0, n_main)
-    t_corr[1] <- 1
+    t_corr[1] <- 10
     for (i in 2:n_main) {
             t_corr[i] <- t_corr[i-1] + xi[i]
     }
@@ -36,7 +36,7 @@ loglikeli <- function(param, data) {
     y_corr <- rep(0, length(t_corr))
 	
     for (j in 1:n_cycle)
-		y_corr <- y_corr + param[[paste0('A.',i)]]*cos(2*pi*freq_c[j]*t_corr + param[[paste0('ph.',i)]])
+		y_corr <- y_corr + param[[paste0('A.',j)]]*cos(2*pi*freq_c[j]*t_corr + param[[paste0('ph.',j)]])
 
 
     # calculate likelihood
@@ -52,9 +52,9 @@ loglikeli <- function(param, data) {
 logprior_ou <- function(param_ou) {
 
     # calculate log priors for the given parameters
-    log_prior_mean <- dnorm(param_ou[['xi_mean']], mean = 1, sd = 0.1, log = T)
-    log_prior_sd <- dunif(param_ou[['xi_sd']], min = 0, max = 1, log = T)
-    log_prior_gamma <- dunif(param_ou[['xi_gamma']], min = 1/200, max = 1, log = T)
+    log_prior_mean <- dnorm(param_ou[['xi_mean']], mean = 10, sd = 0.1, log = T)
+    log_prior_sd <- dunif(param_ou[['xi_sd']], min = 0, max = 3, log = T)
+    log_prior_gamma <- dunif(param_ou[['xi_gamma']], min = 0, max = 1, log = T)
 
     # return result
     return(log_prior_mean + log_prior_sd + log_prior_gamma)
@@ -193,34 +193,49 @@ inference <- function(name){
 
     }
     
-    #Ingferred parameters
+    #Inferred parameters
 
     # A inferred parameters
-	A_inf = infer_par(names(A)[1:n_cycle], df_inf)
+	A_inf = infer_par(names(A), df_inf)
 
 	# ph inferred parameters
-	ph_inf = infer_par(names(ph)[1:n_cycle], df_inf)
+	ph_inf = infer_par(names(ph), df_inf)
 
 	# xi parameters
-    xi_inf = infer_par(paste('xi.',i,sep=''), df_inf)
+	
+    xi_inf = infer_par(names(df_inf_xi), df_inf)
 
     t_inf <- rep(1,n_main)
 
     t_inf[1]=xi_inf[1]
 
-    for (i in 2:n_main)
+    for (i in 2:n_main) {
         t_inf[i]=t_inf[i-1]+xi_inf[i]
+	}
     
     df$xi_inf <- xi_inf
     names(df$xi_inf)= 'xi_inf'
     
     df$t_inf <- t_inf
     names(df$t_inf)= 't_inf'
+	
+	#Estimates y_fit
+	
+	y_d = rep(0, n_main)
+	
+	print(A_inf)
+	for (j in 1:n_cycle) {
+		y_d = y_d + A_inf[j]*cos(2*pi*freq_c[j]*t_inf + ph_inf[j])
+	}
+	
+	df$y_d <- y_d
+	
+	
+	#Estimates difference between original and inferred times
 
     df$t_diff <- df$t - df$t_inf
 	
-	print(A_inf)
-	print(df_inf)
+	print(df)
     
     # Combine the results into a list
     return_list <- list(df = df, df_inf = df_inf, A_inf = A_inf, ph_inf, ph_inf,  inf=inf) #sigma_y left to infer

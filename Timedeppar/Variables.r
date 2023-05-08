@@ -26,13 +26,7 @@ freq_c <- 1/df_cycle$Period
 
 # timedeppar settings 
 n_iter <- 10000
-n_interval <- 20
+n_interval <- 50
 n_adapt <- 2000
 
 
-<<<<<<< Updated upstream
-=======
-n <- 500
-n_main <- 1
-n_cycle <- 1
->>>>>>> Stashed changes
