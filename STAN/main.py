@@ -48,10 +48,6 @@ def infer(file_name):
 	posterior = stan.build(code, data=data, random_seed=12345)
 	
 	fit = posterior.sample(num_chains=n_chains, num_samples=n_sample, num_warmup=n_warmup,
-	                       init=[{'A':10, 'phi':2,
-	                              't':df_sim['t'].values}]*n_chains)#,
-	                              #'mean':1, 
-	                              #'sd':0.05,
-	                              #'tau':100, 
-	                              #'sigma_y':0.05}]*n_chains)
+	                       init=[{'A':vars.A_init, 'phi':vars.phi_init,
+	                              't':df_sim['t'].values}]*n_chains)
 	return fit, year, cycle
