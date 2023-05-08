@@ -29,15 +29,19 @@ parameters {
 
 
 model {
+
+
     // try with normal
-    mean ~ normal(1,0.1);
+    mean ~ normal(10,0.5);
     sd ~ uniform(0, 10);
     tau ~ uniform(1, 200);
     sigma_y ~ uniform(0, 10);
     
     //add priors for A and phi (one for each component)
+    A ~ normal(1, 0.5);
+    phi ~ normal(3, 1);
    
-    t[1] ~ normal(1, 0.01);
+    t[1] ~ normal(10, 1);
     t[2] ~ normal(t[1] + mean, sd);
 
     for (i in 1:n-2) {
@@ -51,7 +55,7 @@ model {
     
         for (j in 1:N_waves) {
 
-            mean_y[i] = A[j]*cos(2*pi()*freq[j] * t[i] + phi[j]);
+            mean_y[i] += A[j]*cos(2*pi()*freq[j] * t[i] + phi[j]);
         }
 
         y_obs[i] ~ normal(mean_y[i], sigma_y);
