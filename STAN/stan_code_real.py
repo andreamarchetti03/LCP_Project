@@ -9,6 +9,11 @@ data {
     real<lower=0> dt;
     
     vector[N_waves] freq; //vector of frequencies
+
+    //initial values of amplitude and phase 
+    //used for prior initialization
+    vector[N_waves] A_init; 
+    vector[N_waves] phi_init;
 }
 
 parameters {
@@ -21,9 +26,8 @@ parameters {
 
     real<lower=0, upper=10> sigma_y;
 
-    vector[N_waves] A; //vector of amplitudes
-    vector[N_waves] phi; //vector of phases
-    //add constraints if uniforms
+    vector<lower=0>[N_waves] A; //vector of amplitudes
+    vector<lower=0, upper=2*pi()>[N_waves] phi; //vector of phases
     
 }
 
@@ -38,8 +42,12 @@ model {
     sigma_y ~ uniform(0, 10);
     
     //add priors for A and phi (one for each component)
-    A ~ normal(1, 0.5);
-    phi ~ normal(3, 1);
+    for (j in 1:N_waves) {
+        A[j] ~ normal(A_init[j], 0.2*A_init[j]);
+        phi[j] ~ normal(phi_init[j], 0.2*phi_init[j]);
+    }
+    //print("log density before =", target());
+
    
     t[1] ~ normal(10, 1);
     t[2] ~ normal(t[1] + mean, sd);
@@ -50,6 +58,9 @@ model {
     }
 
     vector[n] mean_y;
+
+    //initialize the mean_y values to zero
+    for (i in 1:n) mean_y[i] = 0;
 
     for(i in 1:n) {
     
