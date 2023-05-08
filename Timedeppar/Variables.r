@@ -30,3 +30,9 @@ n_interval <- 20
 n_adapt <- 2000
 
 
+<<<<<<< Updated upstream
+=======
+n <- 500
+n_main <- 1
+n_cycle <- 1
+>>>>>>> Stashed changes
