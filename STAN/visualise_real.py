@@ -60,7 +60,7 @@ def signal(inference, from_, to_):
     freq = 1/(vars_real.periods)
     y = np.zeros(Nsteps)
 	
-    for i in range(1,Nwaves): y = A[i] * np.cos(2*np.pi * freq[i] * t_mean + phi[i])
+    for i in range(1,Nwaves): y = y + A[i] * np.cos(2*np.pi * freq[i] * t_mean + phi[i])
     	
 	# denoised signal
     plt.plot(t_mean[from_:to_],y[from_:to_],color="red", label="denoised")

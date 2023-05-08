@@ -40,6 +40,9 @@ def infer(file_name):
 	year  = data_load[:,0]
 	cycle = data_load[:,1]
 	
+	# move the observed signal to have 0 mean
+	cycle = cycle - np.mean(cycle)
+	
 	df_sim = pd.DataFrame(data = {'t':year, 'y':cycle})
 	
 	# assign the data to the dictionary
