@@ -2,7 +2,7 @@ import numpy as np
 
 #crea arrays con periodi, ampiezze e fasi
 #leggendoli da Insu_cycles.txt
-file_name = "../Data/Insu_cycles.txt"
+file_name = "LCP_Project/Data/Insu_cycles.txt"
 
 data_load = np.loadtxt(file_name)
 

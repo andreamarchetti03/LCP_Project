@@ -16,10 +16,8 @@ plt.rcParams['ytick.labelsize'] = 8
 from statsmodels.graphics.tsaplots import plot_acf
 from scipy.signal import welch
 
-from LCP_Project.STAN import stan_code
+from LCP_Project.STAN import stan_code_real
 from LCP_Project.STAN import vars_real
-
-#import vars_real
 
 def infer(file_name):
 
@@ -34,7 +32,7 @@ def infer(file_name):
 	n_warmup = vars_real.n_warmup
 	n_sample = vars_real.n_sample
 	
-	code = stan_code.code
+	code = stan_code_real.code
 	
 	#import data
 	data_load = np.loadtxt(file_name)
@@ -45,7 +43,7 @@ def infer(file_name):
 	df_sim = pd.DataFrame(data = {'t':year, 'y':cycle})
 	
 	# assign the data to the dictionary
-	data = {'n':len(year), 'y_obs':df_sim['y'].values, 'freq':freq, 'dt':dt}
+	data = {'n':len(year), 'y_obs':df_sim['y'].values, 'freq':frequencies, 'dt':dt}
 	
 	# build the model
 	posterior = stan.build(code, data=data, random_seed=12345)
