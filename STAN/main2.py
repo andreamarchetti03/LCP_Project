@@ -43,16 +43,13 @@ def infer(file_name):
 	df_sim = pd.DataFrame(data = {'t':year, 'y':cycle})
 	
 	# assign the data to the dictionary
-	data = {'n':len(year), 'y_obs':df_sim['y'].values, 'freq':frequencies, 'dt':dt}
+	data = {'n':len(year), 'y_obs':df_sim['y'].values, 'freq':frequencies, 'dt':dt, 'N_waves':N_waves}
 	
 	# build the model
 	posterior = stan.build(code, data=data, random_seed=12345)
 	
 	fit = posterior.sample(num_chains=n_chains, num_samples=n_sample, num_warmup=n_warmup,
-	                       init=[{'A':10, 'phi':2,
-	                              't':df_sim['t'].values}]*n_chains)#,
-	                              #'mean':1, 
-	                              #'sd':0.05,
-	                              #'tau':100, 
-	                              #'sigma_y':0.05}]*n_chains)
+	                       init=[{'A':vars_real.amplitudes, 'phi':vars_real.phases,
+	                              't':df_sim['t'].values}]*n_chains)
+
 	return fit, year, cycle
