@@ -6,6 +6,8 @@ file_name = "LCP_Project/Data/Insu_cycles.txt"
 
 data_load = np.loadtxt(file_name)
 
+print(data_load)
+
 periods  = data_load[:,0]
 amplitudes = data_load[:,1]
 phases = data_load[:,2]
@@ -14,5 +16,5 @@ dt = 10
 
 # sample from the model
 n_chains = 2
-n_warmup = 50
-n_sample = 100
+n_warmup = 10
+n_sample = 20
