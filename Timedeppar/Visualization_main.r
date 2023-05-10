@@ -92,3 +92,12 @@ plot_chain<-function(par_inf){
 	
 	
 }
+
+plot_inst<-function(par_inf,name_par_inf){
+    options(repr.plot.width = 15, repr.plot.height = 10)
+   par(mar = c(5.1, 6.1, 4.1, 2.1))
+
+    hist(par_inf,xlab=name_par_inf,ylab_="counts",main=paste0("Histogram of", " ", name_par_inf),col=col_blue,cex.main = 2, cex.lab = 1.7, cex.axis = 1.5)
+    
+    
+    }
