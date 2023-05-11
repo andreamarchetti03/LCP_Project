@@ -44,7 +44,7 @@ model {
     //add priors for A and phi (one for each component)
     for (j in 1:N_waves) {
         A[j] ~ normal(A_init[j], 0.2*A_init[j]);
-        phi[j] ~ normal(phi_init[j], 0.2*phi_init[j]);
+  #      phi[j] ~ normal(phi_init[j], 0.2*phi_init[j]);
     }
     //print("log density before =", target());
 

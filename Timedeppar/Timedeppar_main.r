@@ -223,6 +223,9 @@ inference <- function(name){
 	# xi parameters
 	
     xi_inf = infer_par(names(df_inf_xi), df_inf)
+    
+    
+    xi_mean_inf=infer_par(list("xi_mean"),df_inf)
 
     t_inf <- rep(1,n_main)
 
@@ -255,7 +258,10 @@ inference <- function(name){
 	
     
     # Combine the results into a list
-    return_list <- list(df = df, df_inf = df_inf, A_inf = A_inf, ph_inf =  ph_inf,  inf=inf) #sigma_y left to infer
+
+
+    return_list <- list(df = df, df_inf = df_inf, A_inf = A_inf, ph_inf= ph_inf,  inf=inf,xi_mean_inf=xi_mean_inf) #sigma_y left to infer
+
       
     return(return_list)
     
