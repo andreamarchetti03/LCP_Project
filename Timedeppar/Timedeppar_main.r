@@ -66,9 +66,28 @@ logprior_const <- function(param_const) {
 
     # calculate priors
     log_prior_sigma_y <- dunif(param_const[['sigma_y']], min = 0, max = 1, log = T)
+	
+	log_prior_A <- 0
+	for (k in 1:n_cycle){
+		str(param_const[[paste0('A.',k)]][1])
+		print(param_const[[paste0('A.',k)]][1])
+		str(df_cycle[['A']][k][1])
+		print(df_cycle[['A']][k])
+		log_prior_A <- log_prior_A + dnorm(param_const[[paste0('A.',k)]], mean = df_cycle[['A']][k], sd = df_cycle[['sigma_A']][k], log = T)
+	}
+	
+	log_prior_ph <- 0
+	for (k in 1:n_cycle){
+		log_prior_ph <- log_prior_ph + dnorm(param_const[[paste0('ph.',k)]], mean = df_cycle[['ph']][k] , sd = df_cycle[['sigma_ph']][k], log = T)
+	}
+	
+	#log_prior_f <- 0
+	#for (k in 1:n_cycle){
+	#	log_prior_f <- log_prior_ph dnorm(param_const[[paste0('f.',k)]], mean = df_cycle[['f']][k], sd = df_cycle[['sigma_f']][k], log = T)
+	#}
 
     # return result
-    return(log_prior_sigma_y)
+    return(log_prior_sigma_y + log_prior_A + log_prior_ph)
 
 }
 
@@ -222,8 +241,7 @@ inference <- function(name){
 	#Estimates y_fit
 	
 	y_d = rep(0, n_main)
-	
-	print(A_inf)
+
 	for (j in 1:n_cycle) {
 		y_d = y_d + A_inf[j]*cos(2*pi*freq_c[j]*t_inf + ph_inf[j])
 	}
@@ -235,10 +253,9 @@ inference <- function(name){
 
     df$t_diff <- df$t - df$t_inf
 	
-	print(df)
     
     # Combine the results into a list
-    return_list <- list(df = df, df_inf = df_inf, A_inf = A_inf, ph_inf= ph_inf,  inf=inf) #sigma_y left to infer
+    return_list <- list(df = df, df_inf = df_inf, A_inf = A_inf, ph_inf =  ph_inf,  inf=inf) #sigma_y left to infer
       
     return(return_list)
     

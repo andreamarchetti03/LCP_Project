@@ -65,8 +65,8 @@ logprior_const <- function(param_const) {
 
     # calculate priors
     log_prior_sigma_y <- dunif(param_const[['sigma_y']], min = 0, max = 1, log = T)
-	log_prior_sigma_y <- dnorm(param_const[['A']], mean = 10, sd = 1, log = T)
-	log_prior_sigma_y <- dnorm(param_const[['ph']], mean = 2, sd = 0.1, log = T)
+	#log_prior_A <- dnorm(param_const[['A']], mean = 10, sd = 1, log = T)
+	#log_prior_ph <- dnorm(param_const[['ph']], mean = 2, sd = 0.1, log = T)
 
     # return result
     return(log_prior_sigma_y)
