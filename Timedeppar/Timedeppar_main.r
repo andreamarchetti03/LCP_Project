@@ -37,6 +37,17 @@ loglikeli <- function(param, data) {
 	
     for (j in 1:n_cycle)
 		y_corr <- y_corr + param[[paste0('A.',j)]]*cos(2*pi*freq[j]*t_corr + param[[paste0('ph.',j)]])
+		
+		
+	'''
+		New version
+	for (j in 1:n_fix-1)
+		y_corr <- y_corr + param[[paste0('A.',j)]]*cos(2*pi*freq[j]*t_corr + param[[paste0('ph.',j)]])
+		
+	for (j in n_fix:n_cycle)
+		y_corr <- y_corr + param[[paste0('A.',j)]]*cos(2*pi*param[[paste0('freq.',j)]]*t_corr + param[[paste0('ph.',j)]])
+		
+	'''
 
 
     # calculate likelihood
@@ -77,10 +88,12 @@ logprior_const <- function(param_const) {
 		log_prior_ph <- log_prior_ph + dnorm(param_const[[paste0('ph.',k)]], mean = df_cycle[['ph']][k] , sd = df_cycle[['sigma_ph']][k], log = T)
 	}
 	
-	#log_prior_f <- 0
-	#for (k in 1:n_cycle){
-	#	log_prior_f <- log_prior_ph dnorm(param_const[[paste0('f.',k)]], mean = df_cycle[['f']][k], sd = df_cycle[['sigma_f']][k], log = T)
-	#}
+	'''
+	log_prior_f <- 0
+	for (k in n_fix:n_cycle){
+		log_prior_f <- log_prior_ph dnorm(param_const[[paste0('f.',k)]], mean = df_cycle[['f']][k], sd = df_cycle[['sigma_f']][k], log = T)
+	}
+	'''
 
     # return result
     return(log_prior_sigma_y + log_prior_A + log_prior_ph)
@@ -129,6 +142,16 @@ inference <- function(name){
 		ph <- append(ph, param) 
 	}
 	
+	'''
+	# f parameters
+	f <- NULL
+	for (i in n_fix:n_cycle) {
+		param <- df_cycle[['f']][i]
+		names(param) <- paste0('ph.',i)
+		f <- append(ph, param) 
+	}
+	'''
+	
 	
 	param_init <- list( 'xi' = xi ,'sigma_y' = 0.5)
 	param_init <- c(param_init, A, ph)
@@ -152,6 +175,16 @@ inference <- function(name){
 		names(par_range) <- paste0('ph.',i)
 		ph_range <- append(ph_range, par_range) 
 	}
+	
+	'''
+	# freq parameters range
+	f_range <- NULL
+	for (i in n_fix:n_cycle) {
+		par_range <- list(c(0,0.002))
+		names(par_range) <- paste0('f.',i)
+		f_range <- append(f_range, par_range) 
+	}
+	'''
 
 	param_range <- c(param_range, A_range, ph_range)
     
@@ -217,12 +250,23 @@ inference <- function(name){
 	# ph inferred parameters
 	ph_inf = infer_par(names(ph), df_inf)
 
+	'''
+	# ph inferred parameters
+	ph_inf = infer_par(names(ph), df_inf)
+	'''
+
 	# xi parameters
 	
     xi_inf = infer_par(names(df_inf_xi), df_inf)
     
-    
+    #xi mean
     xi_mean_inf=infer_par(list("xi_mean"),df_inf)
+	
+	#xi sd
+    xi_sd_inf=infer_par(list("xi_sd"),df_inf)
+	
+	#xi gamma
+    xi_gamma_inf=infer_par(list("xi_gamma"),df_inf)
 
     t_inf <- rep(1,n_main)
 
@@ -246,6 +290,17 @@ inference <- function(name){
 		y_d = y_d + A_inf[j]*cos(2*pi*freq[j]*t_inf + ph_inf[j])
 	}
 	
+	
+	'''
+		New version
+	for (j in 1:n_fix-1)
+		y_corr <- y_corr + A_inf[j]*cos(2*pi*freq[j]*t_corr + ph_inf[j])
+		
+	for (j in n_fix:n_cycle)
+		y_corr <- y_corr + A_inf[j]*cos(2*pi*freq_inf[j-(n_fix-1)]*t_corr + ph_inf[j])
+		
+	'''
+	
 	df$y_d <- y_d
 	
 	
@@ -257,7 +312,7 @@ inference <- function(name){
     # Combine the results into a list
 
 
-    return_list <- list(df = df, df_inf = df_inf, A_inf = A_inf, ph_inf= ph_inf,  inf=inf,xi_mean_inf=xi_mean_inf) #sigma_y left to infer
+    return_list <- list(df = df, df_inf = df_inf, A_inf = A_inf, ph_inf= ph_inf, 'freq_inf = freq_inf ,'inf = inf, xi_mean_inf = xi_mean_inf, xi_sd_inf = xi_sd_inf, xi_gamma_inf = xi_gamma_inf) #sigma_y left to infer
 
       
     return(return_list)
