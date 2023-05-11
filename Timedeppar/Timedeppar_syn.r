@@ -35,7 +35,7 @@ loglikeli <- function(param, data) {
     # corrupted model
     y_corr <- rep(0, length(t_corr))
     
-    y_corr <- y_corr + A*cos(2*pi*freq_c*t_corr + ph)
+    y_corr <- y_corr + A*cos(2*pi*freq_syn*t_corr + ph)
 
 
     # calculate likelihood

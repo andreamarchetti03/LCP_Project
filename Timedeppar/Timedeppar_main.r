@@ -36,7 +36,7 @@ loglikeli <- function(param, data) {
     y_corr <- rep(0, length(t_corr))
 	
     for (j in 1:n_cycle)
-		y_corr <- y_corr + param[[paste0('A.',j)]]*cos(2*pi*freq_c[j]*t_corr + param[[paste0('ph.',j)]])
+		y_corr <- y_corr + param[[paste0('A.',j)]]*cos(2*pi*freq[j]*t_corr + param[[paste0('ph.',j)]])
 
 
     # calculate likelihood
@@ -69,10 +69,6 @@ logprior_const <- function(param_const) {
 	
 	log_prior_A <- 0
 	for (k in 1:n_cycle){
-		str(param_const[[paste0('A.',k)]][1])
-		print(param_const[[paste0('A.',k)]][1])
-		str(df_cycle[['A']][k][1])
-		print(df_cycle[['A']][k])
 		log_prior_A <- log_prior_A + dnorm(param_const[[paste0('A.',k)]], mean = df_cycle[['A']][k], sd = df_cycle[['sigma_A']][k], log = T)
 	}
 	
@@ -102,6 +98,7 @@ inference <- function(name){
     file <- paste(name,'.txt', sep='')
 	file_str <- paste('Data/',file,sep='')
     df <- read.csv(file_str, header = T, sep = '\t')
+	
     df = df[1:n_main,]
 	
 	#Shift data around 0 
@@ -246,7 +243,7 @@ inference <- function(name){
 	y_d = rep(0, n_main)
 
 	for (j in 1:n_cycle) {
-		y_d = y_d + A_inf[j]*cos(2*pi*freq_c[j]*t_inf + ph_inf[j])
+		y_d = y_d + A_inf[j]*cos(2*pi*freq[j]*t_inf + ph_inf[j])
 	}
 	
 	df$y_d <- y_d
