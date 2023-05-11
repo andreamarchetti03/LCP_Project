@@ -13,11 +13,14 @@ dt <- 1
 n <- 500
 n_main <- 4149
 n_cycle <- 20
+n_fix <- 7
 
 
 # read cycle parameters
 df_cycle <- read.csv('Data/Insu_cycles.txt', header = T, sep = '\t')
 df_cycle = df_cycle[1:n_cycle,]
+
+n_cycle <- length(df_cycle$Period)
 
 #frequencies
 freq_c <- 1/df_cycle$Period
