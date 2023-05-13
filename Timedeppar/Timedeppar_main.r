@@ -35,19 +35,20 @@ loglikeli <- function(param, data) {
     # corrupted model
     y_corr <- rep(0, length(t_corr))
 	
-    for (j in 1:n_cycle)
-		y_corr <- y_corr + param[[paste0('A.',j)]]*cos(2*pi*freq[j]*t_corr + param[[paste0('ph.',j)]])
+    #for (j in 1:n_cycle){
+	#	y_corr <- y_corr + param[[paste0('A.',j)]]*cos(2*pi*freq[j]*t_corr + param[[paste0('ph.',j)]])
+	#}	
 		
-		
-	'''
-		New version
-	for (j in 1:n_fix-1)
-		y_corr <- y_corr + param[[paste0('A.',j)]]*cos(2*pi*freq[j]*t_corr + param[[paste0('ph.',j)]])
-		
-	for (j in n_fix:n_cycle)
+	
+	#	New version
+	for (j in 1:(n_fix-1)){
+		y_corr <- y_corr + param[[paste0('A.',j)]]*cos(2*pi*freq_i[j]*t_corr + param[[paste0('ph.',j)]])
+	}	
+	
+	for (j in n_fix:n_cycle){
 		y_corr <- y_corr + param[[paste0('A.',j)]]*cos(2*pi*param[[paste0('freq.',j)]]*t_corr + param[[paste0('ph.',j)]])
 		
-	'''
+	}
 
 
     # calculate likelihood
@@ -62,10 +63,11 @@ loglikeli <- function(param, data) {
 
 logprior_ou <- function(param_ou) {
 
+	print(param_ou)
     # calculate log priors for the given parameters
-    log_prior_mean <- dnorm(param_ou[['xi_mean']], mean = 10, sd = 0.1, log = T)
-    log_prior_sd <- dunif(param_ou[['xi_sd']], min = 0, max = 3, log = T)
-    log_prior_gamma <- dunif(param_ou[['xi_gamma']], min = 0, max = 1, log = T)
+    log_prior_mean <- dnorm(param_ou[['xi_mean']], mean = 10, sd = 0.5, log = T)
+    log_prior_sd <- dunif(param_ou[['xi_sd']], min = 0.001, max = 3, log = T)
+    log_prior_gamma <- dunif(param_ou[['xi_gamma']], min = 0.000001, max = 1, log = T)
 
     # return result
     return(log_prior_mean + log_prior_sd + log_prior_gamma)
@@ -74,30 +76,33 @@ logprior_ou <- function(param_ou) {
 
 # define priors for constant parameters
 logprior_const <- function(param_const) {
-
+	
+	print(param_const)
     # calculate priors
-    log_prior_sigma_y <- dunif(param_const[['sigma_y']], min = 0, max = 1, log = T)
+    log_prior_sigma_y <- dunif(param_const[['sigma_y']], min = 0.001, max = 1, log = T)
 	
 	log_prior_A <- 0
 	for (k in 1:n_cycle){
 		log_prior_A <- log_prior_A + dnorm(param_const[[paste0('A.',k)]], mean = df_cycle[['A']][k], sd = df_cycle[['sigma_A']][k], log = T)
 	}
+
 	
 	log_prior_ph <- 0
 	for (k in 1:n_cycle){
 		log_prior_ph <- log_prior_ph + dnorm(param_const[[paste0('ph.',k)]], mean = df_cycle[['ph']][k] , sd = df_cycle[['sigma_ph']][k], log = T)
 	}
 	
-	'''
-	log_prior_f <- 0
+	
+	
+	log_prior_freq <- 0
 	for (k in n_fix:n_cycle){
-		log_prior_f <- log_prior_ph dnorm(param_const[[paste0('f.',k)]], mean = df_cycle[['f']][k], sd = df_cycle[['sigma_f']][k], log = T)
+		log_prior_freq <- log_prior_freq + dnorm(param_const[[paste0('freq.',k)]], mean = df_cycle[['freq']][k], sd = df_cycle[['sigma_f']][k], log = T)
 	}
-	'''
+	
 
     # return result
-    return(log_prior_sigma_y + log_prior_A + log_prior_ph)
-
+    return(log_prior_sigma_y + log_prior_A + log_prior_ph + log_prior_freq)
+	#return(log_prior_sigma_y)
 }
 
 
@@ -142,19 +147,19 @@ inference <- function(name){
 		ph <- append(ph, param) 
 	}
 	
-	'''
+	
 	# f parameters
-	f <- NULL
+	freq <- NULL
 	for (i in n_fix:n_cycle) {
-		param <- df_cycle[['f']][i]
-		names(param) <- paste0('ph.',i)
-		f <- append(ph, param) 
+		param <- freq_i[i]
+		names(param) <- paste0('freq.',i)
+		freq <- append(freq, param) 
 	}
-	'''
+	
 	
 	
 	param_init <- list( 'xi' = xi ,'sigma_y' = 0.5)
-	param_init <- c(param_init, A, ph)
+	param_init <- c(param_init, A, ph, freq)
 	
 	
     # ranges of constant parameters
@@ -163,7 +168,7 @@ inference <- function(name){
 	# A parameters range
 	A_range <- NULL
 	for (i in 1:n_cycle) {
-		par_range <-  list(c(0,3))
+		par_range <-  list(c(0,10))
 		names(par_range) <- paste0('A.',i)
 		A_range <- append(A_range, par_range) 
 	}
@@ -176,21 +181,21 @@ inference <- function(name){
 		ph_range <- append(ph_range, par_range) 
 	}
 	
-	'''
+	
 	# freq parameters range
-	f_range <- NULL
+	freq_range <- NULL
 	for (i in n_fix:n_cycle) {
-		par_range <- list(c(0,0.002))
-		names(par_range) <- paste0('f.',i)
-		f_range <- append(f_range, par_range) 
+		par_range <- list(c(0,0.01))
+		names(par_range) <- paste0('freq.',i)
+		freq_range <- append(freq_range, par_range) 
 	}
-	'''
+	
 
-	param_range <- c(param_range, A_range, ph_range)
+	param_range <- c(param_range, A_range, ph_range, freq_range)
     
     # choose model parameters:
     xi_mean <- 10
-    xi_sd <- 0.1
+    xi_sd <- 1
     xi_gamma <- 1/200
     
     
@@ -203,7 +208,7 @@ inference <- function(name){
                             param.ou.ini = c(xi_mean = xi_mean, xi_sd = xi_sd, xi_gamma = xi_gamma),
                             param.ou.logprior = logprior_ou,
                             n.iter = n_iter,
-                            control = list(n.interval = n_interval, n.adapt = n_adapt),
+                            control = list(n.interval = n_interval, n.adapt = n_adapt, n.adapt.cov = n_adapt_cov),
                             file.save = name,
                             data = df) 
     
@@ -250,10 +255,9 @@ inference <- function(name){
 	# ph inferred parameters
 	ph_inf = infer_par(names(ph), df_inf)
 
-	'''
-	# ph inferred parameters
-	ph_inf = infer_par(names(ph), df_inf)
-	'''
+	
+	# freq inferred parameters
+	freq_inf = infer_par(names(freq), df_inf)
 
 	# xi parameters
 	
@@ -286,20 +290,19 @@ inference <- function(name){
 	
 	y_d = rep(0, n_main)
 
-	for (j in 1:n_cycle) {
-		y_d = y_d + A_inf[j]*cos(2*pi*freq[j]*t_inf + ph_inf[j])
+	#for (j in 1:n_cycle) {
+	#	y_d = y_d + A_inf[j]*cos(2*pi*freq[j]*t_inf + ph_inf[j])
+	#}
+	
+	#New version
+	for (j in 1:(n_fix-1)){
+		y_d <- y_d + A_inf[j]*cos(2*pi*freq_i[j]*t_inf + ph_inf[j])
 	}
+
 	
-	
-	'''
-		New version
-	for (j in 1:n_fix-1)
-		y_corr <- y_corr + A_inf[j]*cos(2*pi*freq[j]*t_corr + ph_inf[j])
-		
-	for (j in n_fix:n_cycle)
-		y_corr <- y_corr + A_inf[j]*cos(2*pi*freq_inf[j-(n_fix-1)]*t_corr + ph_inf[j])
-		
-	'''
+	for (j in n_fix:n_cycle){
+		y_d <- y_d + A_inf[j]*cos(2*pi*freq_inf[j-(n_fix-1)]*t_inf + ph_inf[j])
+	}	
 	
 	df$y_d <- y_d
 	
@@ -312,7 +315,7 @@ inference <- function(name){
     # Combine the results into a list
 
 
-    return_list <- list(df = df, df_inf = df_inf, A_inf = A_inf, ph_inf= ph_inf, 'freq_inf = freq_inf ,'inf = inf, xi_mean_inf = xi_mean_inf, xi_sd_inf = xi_sd_inf, xi_gamma_inf = xi_gamma_inf) #sigma_y left to infer
+    return_list <- list(df = df, df_inf = df_inf, A_inf = A_inf, ph_inf= ph_inf, inf = inf, freq_inf = freq_inf , xi_mean_inf = xi_mean_inf, xi_sd_inf = xi_sd_inf, xi_gamma_inf = xi_gamma_inf) #sigma_y left to infer
 
       
     return(return_list)
