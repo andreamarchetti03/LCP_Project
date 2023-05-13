@@ -19,11 +19,13 @@ df_cycle = df_cycle[1:n_cycle,]
 n_fix <- 7
 
 #frequencies
-freq <- df_cycle$freq
+freq_i <- df_cycle$freq
 
 
 
 # timedeppar settings 
 n_iter <- 10000
-n_interval <- 50
+n_interval <- 150
 n_adapt <- 2000
+n_adapt_cov <- 0
+#n_adapt_cov <- 50
