@@ -15,6 +15,6 @@ phases = data_load[:,2]
 dt = 10
 
 # sample from the model
-n_chains = 2
-n_warmup = 10
-n_sample = 20
+n_chains = 1
+n_warmup = 1
+n_sample = 1
