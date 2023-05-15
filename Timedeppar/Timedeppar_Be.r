@@ -27,7 +27,7 @@ loglikeli <- function(param, data) {
     # corrupted time
     
     t_corr <- rep(0, n_main)
-    t_corr[1] <- 10
+    t_corr[1] <- 2
     for (i in 2:n_main) {
             t_corr[i] <- t_corr[i-1] + xi[i]
     }
@@ -121,9 +121,13 @@ inference <- function(name){
 	mean_y = mean(df$y_obs)
 	df$y_obs = df$y_obs - mean_y
 	
+	#Times also...
+	df$t = df$t - (df$t[1] - 2)
+	
     
-    #Inizialization of parameters
-    xi_init <- NULL
+    #Inizialization of xi parameters
+	
+	xi_init <- NULL
 	xi_init <- append(xi_init, df$t[1])
 	for (i in 2:n_main){
 		param <- df$t[i]-df$t[i-1]
@@ -131,7 +135,6 @@ inference <- function(name){
 	}
     df$init <- xi_init
     xi = df[,c('t','init')]       #It could also be a randOU sequence..
-	
     
     
 	
@@ -161,7 +164,6 @@ inference <- function(name){
 	}
 	
 	
-	
 	param_init <- list( 'xi' = xi ,'sigma_y' = 0.5)
 	param_init <- c(param_init, A, ph, freq)
 	
@@ -172,7 +174,7 @@ inference <- function(name){
 	# A parameters range
 	A_range <- NULL
 	for (i in 1:n_cycle) {
-		par_range <-  list(c(0,10))
+		par_range <-  list(c(0,0.5))
 		names(par_range) <- paste0('A.',i)
 		A_range <- append(A_range, par_range) 
 	}
@@ -189,7 +191,7 @@ inference <- function(name){
 	# freq parameters range
 	freq_range <- NULL
 	for (i in n_fix:n_cycle) {
-		par_range <- list(c(0,0.01))
+		par_range <- list(c(0,0.02))
 		names(par_range) <- paste0('freq.',i)
 		freq_range <- append(freq_range, par_range) 
 	}
@@ -198,8 +200,8 @@ inference <- function(name){
 	param_range <- c(param_range, A_range, ph_range, freq_range)
     
     # choose model parameters:
-    xi_mean <- 10
-    xi_sd <- 1
+    xi_mean <- 2
+    xi_sd <- 0.2
     xi_gamma <- 1/200
     
     
