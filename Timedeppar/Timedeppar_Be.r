@@ -64,9 +64,9 @@ loglikeli <- function(param, data) {
 logprior_ou <- function(param_ou) {
 
     # calculate log priors for the given parameters
-    log_prior_mean <- dnorm(param_ou[['xi_mean']], mean = 10, sd = 0.5, log = T)
-    log_prior_sd <- dunif(param_ou[['xi_sd']], min = 0.001, max = 3, log = T)
-    log_prior_gamma <- dunif(param_ou[['xi_gamma']], min = 0.000001, max = 1, log = T)
+    log_prior_mean <- dnorm(param_ou[['xi_mean']], mean =5, sd = 2, log = T)
+    log_prior_sd <- dunif(param_ou[['xi_sd']], min = 0, max = 4, log = T)
+    log_prior_gamma <- dunif(param_ou[['xi_gamma']], min = 0, max = 1, log = T)
 
     # return result
     return(log_prior_mean + log_prior_sd + log_prior_gamma)
@@ -77,7 +77,7 @@ logprior_ou <- function(param_ou) {
 logprior_const <- function(param_const) {
 	
     # calculate priors
-    log_prior_sigma_y <- dunif(param_const[['sigma_y']], min = 0.001, max = 1, log = T)
+    log_prior_sigma_y <- dunif(param_const[['sigma_y']], min = 0, max = 1, log = T)
 	
 	log_prior_A <- 0
 	for (k in 1:n_cycle){
@@ -100,7 +100,6 @@ logprior_const <- function(param_const) {
 
     # return result
     return(log_prior_sigma_y + log_prior_A + log_prior_ph + log_prior_freq)
-	#return(log_prior_sigma_y)
 }
 
 
@@ -174,7 +173,7 @@ inference <- function(name){
 	# A parameters range
 	A_range <- NULL
 	for (i in 1:n_cycle) {
-		par_range <-  list(c(0,0.5))
+		par_range <-  list(c(0,0.3))
 		names(par_range) <- paste0('A.',i)
 		A_range <- append(A_range, par_range) 
 	}
@@ -200,8 +199,8 @@ inference <- function(name){
 	param_range <- c(param_range, A_range, ph_range, freq_range)
     
     # choose model parameters:
-    xi_mean <- 2
-    xi_sd <- 0.2
+    xi_mean <- mean(df$init)
+    xi_sd <- sd(df$init)
     xi_gamma <- 1/200
     
     
