@@ -16,8 +16,11 @@ plt.rcParams['ytick.labelsize'] = 8
 from statsmodels.graphics.tsaplots import plot_acf
 from scipy.signal import welch
 
+#from LCP_Project.STAN import stan_code_real
+#from LCP_Project.STAN import vars_real
 from LCP_Project.STAN import stan_code_real
 from LCP_Project.STAN import vars_real
+
 
 def infer(file_name):
 
@@ -31,8 +34,11 @@ def infer(file_name):
 	n_chains = vars_real.n_chains
 	n_warmup = vars_real.n_warmup
 	n_sample = vars_real.n_sample
+
 	
+	#code = stan_code_real.code
 	code = stan_code_real.code
+
 	
 	#import data
 	data_load = np.loadtxt(file_name)
@@ -49,6 +55,7 @@ def infer(file_name):
 	data = {'n':len(year), 'y_obs':df_sim['y'].values, 'freq':frequencies, 'dt':dt, 'N_waves':N_waves,
 			'A_init':amplitudes, 'phi_init':phases}
 	print(df_sim['t'])
+
 	# build the model
 	posterior = stan.build(code, data=data, random_seed=12345)
 	
@@ -56,5 +63,6 @@ def infer(file_name):
 	fit = posterior.sample(num_chains=n_chains, num_samples=n_sample, num_warmup=n_warmup,
 	                       init=[{'A':vars_real.amplitudes, 'phi':vars_real.phases,
 	                              't':df_sim['t'].values}]*n_chains)
+
 
 	return fit, year, cycle
