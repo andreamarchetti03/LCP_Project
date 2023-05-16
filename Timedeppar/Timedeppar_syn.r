@@ -52,7 +52,7 @@ logprior_ou <- function(param_ou) {
 
     # calculate log priors for the given parameters
     log_prior_mean <- dnorm(param_ou[['xi_mean']], mean = 1, sd = 0.1, log = T)
-    log_prior_sd <- dunif(param_ou[['xi_sd']], min = 0, max = 0.2, log = T)
+    log_prior_sd <- dunif(param_ou[['xi_sd']], min = 0, max = 0.5, log = T)
     log_prior_gamma <- dunif(param_ou[['xi_gamma']], min = 1/200, max = 1, log = T)
 
     # return result
