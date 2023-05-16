@@ -92,11 +92,30 @@ plot_chain<-function(par_inf){
 	
 }
 
-plot_inst<-function(par_inf,name_par_inf){
+plot_inst<-function(par_inf){
     options(repr.plot.width = 15, repr.plot.height = 10)
     par(mar = c(5.1, 6.1, 4.1, 2.1))
+    par(mfrow=c(3,3))
+    name_par_inf=c("xi mean","xi_gamma", "xi_sd", "A.1", "ph.1", "freq.8")
 
-    hist(par_inf,xlab=name_par_inf,ylab_="counts",main=paste0("Histogram of", " ", name_par_inf),col=col_blue,cex.main = 2, cex.lab = 1.7, cex.axis = 1.5)
+    hist(par_inf$xi_mean,xlab=name_par_inf[[1],ylab_="counts",main=paste0("Histogram of", " ", name_par_inf[[1]]),
+         col=col_blue,cex.main = 2, cex.lab = 1.7, cex.axis = 1.5)
+    
+    hist(par_inf$xi_gamma,xlab=name_par_inf[[2]],ylab_="counts",main=paste0("Histogram of", " ", name_par_inf[[2]]),
+         col=col_blue,cex.main = 2, cex.lab = 1.7, cex.axis = 1.5)
+    
+    hist(par_inf$xi_sd,xlab=name_par_inf[[3]],ylab_="counts",main=paste0("Histogram of", " ", name_par_inf[[3]]),
+         col=col_blue,cex.main = 2, cex.lab = 1.7, cex.axis = 1.5)
+    
+    hist(par_inf$A.1,xlab=name_par_inf[[4]],ylab_="counts",main=paste0("Histogram of", " ", name_par_inf[[4]]),
+         col=col_blue,cex.main = 2, cex.lab = 1.7, cex.axis = 1.5)
+    
+    hist(par_inf$ph.1,xlab=name_par_inf[[5]],ylab_="counts",main=paste0("Histogram of", " ", name_par_inf[[5]]),
+         col=col_blue,cex.main = 2, cex.lab = 1.7, cex.axis = 1.5)
+    
+    hist(par_inf$freq.8,xlab=name_par_inf[[6]],ylab_="counts",main=paste0("Histogram of", " ", name_par_inf[[6]]),
+         col=col_blue,cex.main = 2, cex.lab = 1.7, cex.axis = 1.5)
+    
     
     
     }
