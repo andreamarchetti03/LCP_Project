@@ -2,7 +2,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 from scipy.signal import welch
 
-from LCP_Project.STAN import vars_real
+from LCP_Project.STAN import vars_real2
 
 # retrieve the necessary variables separately
 def init(inference):
@@ -11,7 +11,7 @@ def init(inference):
 	t = inference[0]["t"]
 	t_mean = np.mean(t,axis=1)
 
-	return inference[0], inference[1], t_mean, inference[2]
+	return inference[0], inference[1], t_mean, inference[2], inference[3]
 
 # split chains into different vectors	
 def split(x, n_chains):
@@ -46,7 +46,7 @@ def visualise(inference, from_, to_, sparam):
 
 def signal(inference, from_, to_):
 	
-    fit, year, t_mean, cycle = init(inference)
+    fit, year, t_mean, cycle, freq = init(inference)
 	
     A=np.mean(fit["A"], axis=1)
     phi=np.mean(fit["phi"], axis=1)
@@ -57,12 +57,14 @@ def signal(inference, from_, to_):
 	# number of waves
     Nwaves = len(A)
 
-    freq = 1/(vars_real.periods)
+
+    #freq = 1/(vars_real.periods)
     y = np.zeros(Nsteps)
-	
+    print("Nwaves:", Nwaves)	
+
     for i in range(0,Nwaves): y = y + A[i] * np.cos(2*np.pi * freq[i] * t_mean + phi[i])
     	
-    # original signal
+	# original signal
     plt.plot(year[from_:to_],cycle[from_:to_],color="blue", label="original")
 
 	# denoised signal
@@ -77,7 +79,7 @@ def signal(inference, from_, to_):
 
 def time_diff(inference, from_, to_):
 
-	fit, year, t_mean, cycle = init(inference)
+	fit, year, t_mean, cycle, freq = init(inference)
 	
 	dif  = year - t_mean
 
@@ -98,13 +100,16 @@ def time_diff(inference, from_, to_):
 
 def PSD(inference):
 
-	fit, year, t_mean, cycle = init(inference)
+	fit, year, t_mean, cycle, freq = init(inference)
 	
 	A=np.mean(fit["A"])
 	phi=np.mean(fit["phi"])
+
+	Nwaves = len(A)
 	
 	# denoised signal
-	y = A*np.cos(2*np.pi*vars_real.freq*t_mean + phi)
+	for i in range(0,Nwaves): y = y + A[i] * np.cos(2*np.pi * freq[i] * t_mean + phi[i])
+	#y = A*np.cos(2*np.pi*vars_real2.freq*t_mean + phi)
 	
 	sampling_freq = 1 / np.mean(np.diff(year))
 	freqs_, pow_ = welch(cycle, fs=sampling_freq)#, nperseg=1024)
@@ -130,7 +135,9 @@ def PSD(inference):
 	
 def marginal(inference):
 
-	fit, year, t_mean, cycle = init(inference)
+	fit, year, t_mean, cycle, freq = init(inference)
+
+	freq_inf = fit["freq_inf"][0]
 
 	mean = fit["mean"][0]
 	sd   = fit["sd"][0]
@@ -141,7 +148,7 @@ def marginal(inference):
 	
 	#plt.scatter(np.arange(0, len(mean[0])), mean[0])
 	
-	fig, ax = plt.subplots(2, 3, figsize=(15, 8))
+	fig, ax = plt.subplots(3, 3, figsize=(15, 8))
 	
 	ax[0][0].hist(mean); ax[0][0].set_title("mean")
 	ax[0][1].hist(sd); ax[0][1].set_title("sd")
@@ -150,15 +157,20 @@ def marginal(inference):
 	ax[1][0].hist(A); ax[1][0].set_title("A")
 	ax[1][1].hist(phi); ax[1][1].set_title("phi")
 	ax[1][2].hist(sigma_y); ax[1][2].set_title("sigma_y")
+
+	ax[2][0].hist(freq); ax[1][2].set_title("freq_inf")
+
+
+
 	
 	
 def chains(inference, sparam):
 
-	fit, year, t_mean, cycle = init(inference)
+	fit, year, t_mean, cycle, freq = init(inference)
 	
 	param = fit[sparam][0]
 
-	param_chains = split(param, vars_real.n_chains)
+	param_chains = split(param, vars_real2.n_chains)
 	
 	fig, ax = plt.subplots(1,1, figsize=(6,4))
 	
@@ -166,7 +178,7 @@ def chains(inference, sparam):
 	ax.set_xlabel("Iteration")
 	ax.set_ylabel("Value")
 	
-	for i in range(0,vars_real.n_chains):
+	for i in range(0,vars_real2.n_chains):
 	    
-	    ax.scatter(np.arange(0,vars_real.n_sample), param_chains[i])
+	    ax.scatter(np.arange(0,vars_real2.n_sample), param_chains[i])
 	    
