@@ -113,7 +113,7 @@ plot_multi_chain<-function(par_inf){
 }
 
 
-plot_inst<-function(par_inf){
+plot_hist<-function(par_inf){
     options(repr.plot.width = 15, repr.plot.height = 10)
     par(mar = c(5.1, 6.1, 4.1, 2.1))
     par(mfrow=c(3,3))
