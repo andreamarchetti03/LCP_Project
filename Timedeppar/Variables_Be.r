@@ -23,7 +23,9 @@ freq_i <- df_cycle$freq
 
 
 # timedeppar settings 
+
 n_iter <- 50000
 n_interval <- 300
 n_adapt <- 10000
 n_adapt_cov <- 500
+
