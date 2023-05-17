@@ -8,7 +8,7 @@ library(timedeppar)
 library(invgamma)
 seed = 12345
 
-
+source('LCP_Project/Timedeppar/Visualization_Be.r')
 
 # define observational likelihood
 loglikeli <- function(param, data) {
@@ -65,7 +65,7 @@ logprior_ou <- function(param_ou) {
 
     # calculate log priors for the given parameters
     log_prior_mean <- dnorm(param_ou[['xi_mean']], mean =5, sd = 2, log = T)
-    log_prior_sd <- dunif(param_ou[['xi_sd']], min = 0, max = 4, log = T)
+    log_prior_sd <- dunif(param_ou[['xi_sd']], min = 0, max = 5, log = T)
     log_prior_gamma <- dunif(param_ou[['xi_gamma']], min = 0, max = 1, log = T)
 
     # return result
@@ -81,20 +81,20 @@ logprior_const <- function(param_const) {
 	
 	log_prior_A <- 0
 	for (k in 1:n_cycle){
-		log_prior_A <- log_prior_A + dnorm(param_const[[paste0('A.',k)]], mean = df_cycle[['A']][k], sd = df_cycle[['sigma_A']][k], log = T)
+		log_prior_A <- log_prior_A + dnorm(param_const[[paste0('A.',k)]], mean = df_cycle[['A']][k], sd = 5*df_cycle[['sigma_A']][k], log = T)
 	}
 
 	
 	log_prior_ph <- 0
 	for (k in 1:n_cycle){
-		log_prior_ph <- log_prior_ph + dnorm(param_const[[paste0('ph.',k)]], mean = df_cycle[['ph']][k] , sd = df_cycle[['sigma_ph']][k], log = T)
+		log_prior_ph <- log_prior_ph + dnorm(param_const[[paste0('ph.',k)]], mean = df_cycle[['ph']][k] , sd = 5*df_cycle[['sigma_ph']][k], log = T)
 	}
 	
 	
 	
 	log_prior_freq <- 0
 	for (k in n_fix:n_cycle){
-		log_prior_freq <- log_prior_freq + dnorm(param_const[[paste0('freq.',k)]], mean = df_cycle[['freq']][k], sd = df_cycle[['sigma_f']][k], log = T)
+		log_prior_freq <- log_prior_freq + dnorm(param_const[[paste0('freq.',k)]], mean = df_cycle[['freq']][k], sd = 5*df_cycle[['sigma_f']][k], log = T)
 	}
 	
 
@@ -276,6 +276,9 @@ inference <- function(name){
 	
 	#xi gamma
     xi_gamma_inf=infer_par(list("xi_gamma"),df_inf)
+	
+	#sigma_y
+    sigma_y_inf=infer_par(list("sigma_y"),df_inf)
 
     t_inf <- rep(1,n_main)
 
@@ -291,26 +294,27 @@ inference <- function(name){
     df$t_inf <- t_inf
     names(df$t_inf)= 't_inf'
 	
-	#Estimates y_fit
+	#Estimates y_fit and y_o
 	
 	y_d = rep(0, n_main)
-
-	#for (j in 1:n_cycle) {
-	#	y_d = y_d + A_inf[j]*cos(2*pi*freq[j]*t_inf + ph_inf[j])
-	#}
+	y_o = rep(0, n_main)
+	print(A)
+	
 	
 	#New version
 	for (j in 1:(n_fix-1)){
 		y_d <- y_d + A_inf[j]*cos(2*pi*freq_i[j]*t_inf + ph_inf[j])
+		y_o <- y_o + A[j]*cos(2*pi*freq_i[j]*df$t[j] + ph[j])
 	}
 
 	
 	for (j in n_fix:n_cycle){
 		y_d <- y_d + A_inf[j]*cos(2*pi*freq_inf[j-(n_fix-1)]*t_inf + ph_inf[j])
+		y_o <- y_o + A[j]*cos(2*pi*freq_i[j]*df$t[j] + ph[j])
 	}	
 	
 	df$y_d <- y_d
-	
+	df$y_o <- y_o
 	
 	#Estimates difference between original and inferred times
 
@@ -318,7 +322,9 @@ inference <- function(name){
 	
     
     # Combine the results into a list
-
+	
+	
+	plot_inf(df)
 
     return_list <- list(df = df, df_inf = df_inf, A_inf = A_inf, ph_inf= ph_inf, inf = inf, freq_inf = freq_inf , xi_mean_inf = xi_mean_inf, xi_sd_inf = xi_sd_inf, xi_gamma_inf = xi_gamma_inf) #sigma_y left to infer
 
