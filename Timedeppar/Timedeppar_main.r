@@ -65,7 +65,7 @@ logprior_ou <- function(param_ou) {
 
     # calculate log priors for the given parameters
     log_prior_mean <- dnorm(param_ou[['xi_mean']], mean = 10, sd = 0.5, log = T)
-    log_prior_sd <- dunif(param_ou[['xi_sd']], min = 0, max = 3, log = T)
+    log_prior_sd <- dgamma(param_ou[['xi_sd']], shape = 1, rate = 1, log = T)
     log_prior_gamma <- dunif(param_ou[['xi_gamma']], min = 0, max = 1, log = T)
 
     # return result
@@ -81,20 +81,20 @@ logprior_const <- function(param_const) {
 	
 	log_prior_A <- 0
 	for (k in 1:n_cycle){
-		log_prior_A <- log_prior_A + dnorm(param_const[[paste0('A.',k)]], mean = df_cycle[['A']][k], sd = df_cycle[['sigma_A']][k], log = T)
+		log_prior_A <- log_prior_A + dnorm(param_const[[paste0('A.',k)]], mean = df_cycle[['A']][k], sd = 5*df_cycle[['sigma_A']][k], log = T)
 	}
 
 	
 	log_prior_ph <- 0
 	for (k in 1:n_cycle){
-		log_prior_ph <- log_prior_ph + dnorm(param_const[[paste0('ph.',k)]], mean = df_cycle[['ph']][k] , sd = df_cycle[['sigma_ph']][k], log = T)
+		log_prior_ph <- log_prior_ph + dnorm(param_const[[paste0('ph.',k)]], mean = df_cycle[['ph']][k] , sd = 5*df_cycle[['sigma_ph']][k], log = T)
 	}
 	
 	
 	
 	log_prior_freq <- 0
 	for (k in n_fix:n_cycle){
-		log_prior_freq <- log_prior_freq + dnorm(param_const[[paste0('freq.',k)]], mean = df_cycle[['freq']][k], sd = df_cycle[['sigma_f']][k], log = T)
+		log_prior_freq <- log_prior_freq + dnorm(param_const[[paste0('freq.',k)]], mean = df_cycle[['freq']][k], sd = 5*df_cycle[['sigma_f']][k], log = T)
 	}
 	
 
@@ -317,6 +317,8 @@ inference <- function(name,dname){
 	
     
 	plot_inf(df)
+	plot_hist(df_inf)
+	plot_multi_chain(df_inf)
 	
 	
     # Combine the results into a list
