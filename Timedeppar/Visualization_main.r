@@ -140,6 +140,5 @@ plot_hist<-function(par_inf){
          col=col_blue,cex.main = 2, cex.lab = 1.7, cex.axis = 1.5)
     
     
-    
     }
 #Commento
