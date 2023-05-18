@@ -8,7 +8,7 @@ library(timedeppar)
 library(invgamma)
 seed = 12345
 
-
+source('LCP_Project/Timedeppar/Visualization_Be.r')
 
 # define observational likelihood
 loglikeli <- function(param, data) {
@@ -107,7 +107,7 @@ logprior_const <- function(param_const) {
 
 #Inference
 
-inference <- function(name){
+inference <- function(name,dname){
     
     #Read data
 	
@@ -213,7 +213,7 @@ inference <- function(name){
                             param.ou.logprior = logprior_ou,
                             n.iter = n_iter,
                             control = list(n.interval = n_interval, n.adapt = n_adapt, n.adapt.cov = n_adapt_cov),
-                            file.save = name,
+                            file.save = dname,
                             data = df) 
     
     #Extract inferred data
@@ -316,8 +316,11 @@ inference <- function(name){
     df$t_diff <- df$t - df$t_inf
 	
     
+	plot_inf(df)
+	
+	
     # Combine the results into a list
-
+	
 
     return_list <- list(df = df, df_inf = df_inf, A_inf = A_inf, ph_inf= ph_inf, inf = inf, freq_inf = freq_inf , xi_mean_inf = xi_mean_inf, xi_sd_inf = xi_sd_inf, xi_gamma_inf = xi_gamma_inf) #sigma_y left to infer
 

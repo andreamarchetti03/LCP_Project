@@ -44,9 +44,15 @@ plot_inf <- function(data){
          type = 'l', lty = 1, lwd = 2, col = col_blue,
          cex.main = 2, cex.lab = 1.7, cex.axis = 1.5)
 		 
+	lines(data$t, data$y_o,   
+         type = 'l', lty = 1, lwd = 3, col = col_green,
+         cex.main = 2, cex.lab = 1.7, cex.axis = 1.5)
+		 
 	lines(data$t_inf, data$y_d,   
          type = 'l', lty = 1, lwd = 4, col = col_red,
          cex.main = 2, cex.lab = 1.7, cex.axis = 1.5)
+
+
 
     grid(nx = NULL, ny = NULL,
             lty = 2, col = col_grey, lwd = 2)
