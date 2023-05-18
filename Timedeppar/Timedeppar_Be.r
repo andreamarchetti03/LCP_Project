@@ -108,7 +108,7 @@ logprior_const <- function(param_const) {
 
 #Inference
 
-inference <- function(name){
+inference <- function(name, dname){
     
     #Read data
 	
@@ -216,7 +216,7 @@ inference <- function(name){
                             param.ou.logprior = logprior_ou,
                             n.iter = n_iter,
                             control = list(n.interval = n_interval, n.adapt = n_adapt, n.adapt.cov = n_adapt_cov),
-                            file.save = name,
+                            file.save = dname,
                             data = df) 
     
     #Extract inferred data
