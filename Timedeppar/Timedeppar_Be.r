@@ -64,12 +64,12 @@ loglikeli <- function(param, data) {
 logprior_ou <- function(param_ou) {
 
     # calculate log priors for the given parameters
-    log_prior_mean <- dnorm(param_ou[['xi_mean']], mean =5, sd = 2, log = T)
+    log_prior_mean <- dnorm(param_ou[['xi_mean']], mean =5, sd = 0.05, log = T)
 
-    log_prior_sd <- dunif(param_ou[['xi_sd']], min = 0, max = 5, log = T)
-
-    log_prior_gamma <- dunif(param_ou[['xi_gamma']], min = 0, max = 1, log = T)
-
+     log_prior_sd <- dgamma(param_ou[['xi_sd']], shape = 0.1, rate = 0.01, log = T)
+    
+    log_prior_gamma <- dinvgamma(param_ou[['xi_gamma']], shape = 1.25, rate = 0.0125, log = T)
+    
     # return result
     return(log_prior_mean + log_prior_sd + log_prior_gamma)
 
