@@ -14,7 +14,7 @@ n <- 500
 
 # timedeppar settings 
 n_iter <- 2000
-n_interval <- 50
+n_interval <- 20
 n_adapt <- 400
 n_adapt_cov <- 0
 
