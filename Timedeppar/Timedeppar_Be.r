@@ -108,7 +108,7 @@ logprior_const <- function(param_const) {
 
 #Inference
 
-inference <- function(name, dname){
+inference <- function(name, dname_df){
     
     #Read data
 	
@@ -216,7 +216,6 @@ inference <- function(name, dname){
                             param.ou.logprior = logprior_ou,
                             n.iter = n_iter,
                             control = list(n.interval = n_interval, n.adapt = n_adapt, n.adapt.cov = n_adapt_cov),
-                            file.save = dname,
                             data = df) 
     
     #Extract inferred data
@@ -306,13 +305,13 @@ inference <- function(name, dname){
 	#New version
 	for (j in 1:(n_fix-1)){
 		y_d <- y_d + A_inf[j]*cos(2*pi*freq_i[j]*t_inf + ph_inf[j])
-		y_o <- y_o + A[j]*cos(2*pi*freq_i[j]*df$t[j] + ph[j])
+		y_o <- y_o + A[j]*cos(2*pi*freq_i[j]*df$t + ph[j])
 	}
 
 	
 	for (j in n_fix:n_cycle){
 		y_d <- y_d + A_inf[j]*cos(2*pi*freq_inf[j-(n_fix-1)]*t_inf + ph_inf[j])
-		y_o <- y_o + A[j]*cos(2*pi*freq_i[j]*df$t[j] + ph[j])
+		y_o <- y_o + A[j]*cos(2*pi*freq_i[j]*df$t + ph[j])
 	}	
 	
 	df$y_d <- y_d
@@ -329,8 +328,10 @@ inference <- function(name, dname){
 	plot_inf(df)
 
     return_list <- list(df = df, df_inf = df_inf, A_inf = A_inf, ph_inf= ph_inf, inf = inf, freq_inf = freq_inf , xi_mean_inf = xi_mean_inf, xi_sd_inf = xi_sd_inf, xi_gamma_inf = xi_gamma_inf) #sigma_y left to infer
-
-      
+    
+    
+    write.table(df, paste(dname_df,".txt",sep=''), row.names=FALSE)
+    write.table(df_inf, paste(dname_df,"_inf.txt",sep=''), row.names=FALSE)
     return(return_list)
     
 }
