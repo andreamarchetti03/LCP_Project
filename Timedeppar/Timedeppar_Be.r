@@ -64,12 +64,12 @@ loglikeli <- function(param, data) {
 logprior_ou <- function(param_ou) {
 
     # calculate log priors for the given parameters
-    log_prior_mean <- dnorm(param_ou[['xi_mean']], mean =5, sd = 2, log = T)
+    log_prior_mean <- dnorm(param_ou[['xi_mean']], mean =5, sd = 0.05, log = T)
 
-    log_prior_sd <- dunif(param_ou[['xi_sd']], min = 0, max = 5, log = T)
-
-    log_prior_gamma <- dunif(param_ou[['xi_gamma']], min = 0, max = 1, log = T)
-
+     log_prior_sd <- dgamma(param_ou[['xi_sd']], shape = 0.1, rate = 0.01, log = T)
+    
+    log_prior_gamma <- dinvgamma(param_ou[['xi_gamma']], shape = 1.25, rate = 0.0125, log = T)
+    
     # return result
     return(log_prior_mean + log_prior_sd + log_prior_gamma)
 
@@ -83,20 +83,20 @@ logprior_const <- function(param_const) {
 	
 	log_prior_A <- 0
 	for (k in 1:n_cycle){
-		log_prior_A <- log_prior_A + dnorm(param_const[[paste0('A.',k)]], mean = df_cycle[['A']][k], sd = 5*df_cycle[['sigma_A']][k], log = T)
+		log_prior_A <- log_prior_A + dnorm(param_const[[paste0('A.',k)]], mean = df_cycle[['A']][k], sd = 10*df_cycle[['sigma_A']][k], log = T)
 	}
 
 	
 	log_prior_ph <- 0
 	for (k in 1:n_cycle){
-		log_prior_ph <- log_prior_ph + dnorm(param_const[[paste0('ph.',k)]], mean = df_cycle[['ph']][k] , sd = 5*df_cycle[['sigma_ph']][k], log = T)
+		log_prior_ph <- log_prior_ph + dnorm(param_const[[paste0('ph.',k)]], mean = df_cycle[['ph']][k] , sd = 10*df_cycle[['sigma_ph']][k], log = T)
 	}
 	
 	
 	
 	log_prior_freq <- 0
 	for (k in n_fix:n_cycle){
-		log_prior_freq <- log_prior_freq + dnorm(param_const[[paste0('freq.',k)]], mean = df_cycle[['freq']][k], sd = 5*df_cycle[['sigma_f']][k], log = T)
+		log_prior_freq <- log_prior_freq + dnorm(param_const[[paste0('freq.',k)]], mean = df_cycle[['freq']][k], sd = 10*df_cycle[['sigma_f']][k], log = T)
 	}
 	
 
@@ -108,7 +108,7 @@ logprior_const <- function(param_const) {
 
 #Inference
 
-inference <- function(name, dname){
+inference <- function(name, dname_df){
     
     #Read data
 	
@@ -216,7 +216,6 @@ inference <- function(name, dname){
                             param.ou.logprior = logprior_ou,
                             n.iter = n_iter,
                             control = list(n.interval = n_interval, n.adapt = n_adapt, n.adapt.cov = n_adapt_cov),
-                            file.save = dname,
                             data = df) 
     
     #Extract inferred data
@@ -306,13 +305,13 @@ inference <- function(name, dname){
 	#New version
 	for (j in 1:(n_fix-1)){
 		y_d <- y_d + A_inf[j]*cos(2*pi*freq_i[j]*t_inf + ph_inf[j])
-		y_o <- y_o + A[j]*cos(2*pi*freq_i[j]*df$t[j] + ph[j])
+		y_o <- y_o + A[j]*cos(2*pi*freq_i[j]*df$t + ph[j])
 	}
 
 	
 	for (j in n_fix:n_cycle){
 		y_d <- y_d + A_inf[j]*cos(2*pi*freq_inf[j-(n_fix-1)]*t_inf + ph_inf[j])
-		y_o <- y_o + A[j]*cos(2*pi*freq_i[j]*df$t[j] + ph[j])
+		y_o <- y_o + A[j]*cos(2*pi*freq_i[j]*df$t + ph[j])
 	}	
 	
 	df$y_d <- y_d
@@ -329,8 +328,10 @@ inference <- function(name, dname){
 	plot_inf(df)
 
     return_list <- list(df = df, df_inf = df_inf, A_inf = A_inf, ph_inf= ph_inf, inf = inf, freq_inf = freq_inf , xi_mean_inf = xi_mean_inf, xi_sd_inf = xi_sd_inf, xi_gamma_inf = xi_gamma_inf) #sigma_y left to infer
-
-      
+    
+    
+    write.table(df, paste(dname_df,".txt",sep=''), row.names=FALSE)
+    write.table(df_inf, paste(dname_df,"_inf.txt",sep=''), row.names=FALSE)
     return(return_list)
     
 }
