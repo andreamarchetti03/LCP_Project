@@ -83,20 +83,20 @@ logprior_const <- function(param_const) {
 	
 	log_prior_A <- 0
 	for (k in 1:n_cycle){
-		log_prior_A <- log_prior_A + dnorm(param_const[[paste0('A.',k)]], mean = df_cycle[['A']][k], sd = 5*df_cycle[['sigma_A']][k], log = T)
+		log_prior_A <- log_prior_A + dnorm(param_const[[paste0('A.',k)]], mean = df_cycle[['A']][k], sd = 10*df_cycle[['sigma_A']][k], log = T)
 	}
 
 	
 	log_prior_ph <- 0
 	for (k in 1:n_cycle){
-		log_prior_ph <- log_prior_ph + dnorm(param_const[[paste0('ph.',k)]], mean = df_cycle[['ph']][k] , sd = 5*df_cycle[['sigma_ph']][k], log = T)
+		log_prior_ph <- log_prior_ph + dnorm(param_const[[paste0('ph.',k)]], mean = df_cycle[['ph']][k] , sd = 10*df_cycle[['sigma_ph']][k], log = T)
 	}
 	
 	
 	
 	log_prior_freq <- 0
 	for (k in n_fix:n_cycle){
-		log_prior_freq <- log_prior_freq + dnorm(param_const[[paste0('freq.',k)]], mean = df_cycle[['freq']][k], sd = 5*df_cycle[['sigma_f']][k], log = T)
+		log_prior_freq <- log_prior_freq + dnorm(param_const[[paste0('freq.',k)]], mean = df_cycle[['freq']][k], sd = 10*df_cycle[['sigma_f']][k], log = T)
 	}
 	
 

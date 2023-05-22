@@ -65,6 +65,7 @@ logprior_ou <- function(param_ou) {
 
     # calculate log priors for the given parameters
     log_prior_mean <- dnorm(param_ou[['xi_mean']], mean = 10, sd = 0.5, log = T)
+<<<<<<< Updated upstream
 <<<<<<< HEAD
     log_prior_sd <- dgamma(param_ou[['xi_sd']], shape = 0.01, rate = 0.001, log = T)
     log_prior_gamma <- dinvgamma(param_ou[['xi_gamma']], shape = 2.5, rate = 0.125, log = T)
@@ -72,6 +73,10 @@ logprior_ou <- function(param_ou) {
     log_prior_sd <- dgamma(param_ou[['xi_sd']], shape = 1, rate = 1, log = T)
     log_prior_gamma <- dinvgamma(param_ou[['xi_gamma']], shape = 25, rate= 0.025, log = T)
 >>>>>>> main
+=======
+    log_prior_sd <- dgamma(param_ou[['xi_sd']], shape = 10, rate = 10, log = T)
+    log_prior_gamma <- dinvgamma(param_ou[['xi_gamma']], shape = 10, rate = 100, log = T)
+>>>>>>> Stashed changes
 
     # return result
     return(log_prior_mean + log_prior_sd + log_prior_gamma)
