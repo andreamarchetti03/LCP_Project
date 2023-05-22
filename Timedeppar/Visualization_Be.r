@@ -154,8 +154,7 @@ plot_chain_acf <- function(data_inf){
 	options(repr.plot.width = 15, repr.plot.height = 5)
     par(mar = c(5.1, 6.1, 4.1, 2.1))
     name_inf = c("xi_mean","xi_gamma", "xi_sd", "sigma_y", "A.1", "ph.1", "freq.8")
-  #  name_title= c(expression(bold(symbol(x)[mean] ~inferred)),expression(bold(symbol(x)[expression(gamma)] ~inferred)),expression(bold(symbol(x)[sd] ~inferred),expression(bold(symbol(sigma)[y] ~inferred)),expression(bold(A.[1] ~inferred)),expression(bold(symbol(f)[i] ~inferred)),expression(bold(freq.[8] ~inferred)))
-                  
+
 	l <-length(data_inf$xi_mean)
 	x_chain<-seq(1,l,1)  #Put 10 for correct iteration number?
 	
