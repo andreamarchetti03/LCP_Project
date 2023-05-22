@@ -44,6 +44,10 @@ plot_inf <- function(data){
          type = 'l', lty = 1, lwd = 2, col = col_blue,
          cex.main = 2, cex.lab = 1.7, cex.axis = 1.5)
 		 
+	lines(data$t, data$y_or,   
+         type = 'l', lty = 1, lwd = 3, col = col_green,
+         cex.main = 2, cex.lab = 1.7, cex.axis = 1.5)
+		 
 	lines(data$t_inf, data$y_d,   
          type = 'l', lty = 1, lwd = 4, col = col_red,
          cex.main = 2, cex.lab = 1.7, cex.axis = 1.5)
@@ -97,7 +101,7 @@ plot_multi_chain<-function(par_inf){
     options(repr.plot.width = 15, repr.plot.height = 10)
     par(mar = c(5.1, 6.1, 4.1, 2.1))
     par(mfrow=c(3,3))
-    name_par_inf=c("xi mean","xi_gamma", "xi_sd", "A.1", "ph.1", "freq.8")
+    name_par_inf=c("xi_mean","xi_gamma", "xi_sd", "A.1", "ph.1", "freq.8")
 	l <-length(par_inf$xi_mean)
 	x_chain<-seq(1,l,1)
 	plot(x_chain,par_inf$xi_mean,main=paste0("chain of", " ", name_par_inf[[1]]),
@@ -119,7 +123,7 @@ plot_hist<-function(par_inf){
     options(repr.plot.width = 15, repr.plot.height = 10)
     par(mar = c(5.1, 6.1, 4.1, 2.1))
     par(mfrow=c(3,3))
-    name_par_inf=c("xi mean","xi_gamma", "xi_sd", "A.1", "ph.1", "freq.8")
+    name_par_inf=c("xi_mean","xi_gamma", "xi_sd", "A.1", "ph.1", "freq.8")
 
     hist(par_inf$xi_mean,xlab=name_par_inf[[1]],ylab_="counts",main=paste0("Histogram of", " ", name_par_inf[[1]]),
          col=col_blue,cex.main = 2, cex.lab = 1.7, cex.axis = 1.5)
@@ -141,4 +145,22 @@ plot_hist<-function(par_inf){
     
     
     }
-#Commento
+
+plot_chain_acf <- function(data_inf){
+
+	options(repr.plot.width = 15, repr.plot.height = 5)
+    par(mar = c(5.1, 6.1, 4.1, 2.1))
+    name_inf = c("xi_mean","xi_gamma", "xi_sd", "sigma_y", "A.1", "ph.1", "freq.8")
+	l <-length(data_inf$xi_mean)
+	x_chain<-seq(1,l,1)  #Put 10 for correct iteration number?
+	
+    for (i in 1:length(name_inf)){
+		par(mfrow = c(1,2))
+		plot(x_chain,data_inf[[name_inf[i]]],main=paste0("chain of", " ", name_inf[[i]]),
+             col=col_blue,cex.main = 2, cex.lab = 1.7)
+				
+		# autocorrelation
+		acf(data_inf[[name_inf[i]]], lag = length(data_inf[[name_inf[i]]]) - 1,
+			main = 'Autocorrelation', xlab = 'lag', ylab = '', col = col_blue)
+	}
+}
