@@ -332,6 +332,28 @@ inference <- function(name, dname_df){
     
     write.table(df, paste(dname_df,".txt",sep=''), row.names=FALSE)
     write.table(df_inf, paste(dname_df,"_inf.txt",sep=''), row.names=FALSE)
+	
     return(return_list)
     
+}
+
+
+backup<-function(dname){
+
+	#Read data
+    file <- paste(dname,'.txt', sep='')
+	file_inf <- paste(dname,'.txt', sep='')
+	
+	
+    df <- read.csv(file, header = T, sep = '\t')
+    df = df[1:n_main,]
+	
+	df_inf <- read.csv(file_inf, header = T, sep = '\t')
+    df_inf = df_inf[1:n_main,]
+
+	plot_inf(df)
+
+	return_list <- list(df = df, df_inf = df_inf)
+	return(return_list)
+
 }

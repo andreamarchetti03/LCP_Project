@@ -24,16 +24,8 @@ freq_i <- df_cycle$freq
 
 # timedeppar settings 
 
-<<<<<<< Updated upstream
 
-=======
->>>>>>> Stashed changes
 n_iter <- 200000
 n_interval <- 20
 n_adapt <- floor(0.2*n_iter)
 n_adapt_cov <- 500
-<<<<<<< Updated upstream
-=======
-
-
->>>>>>> Stashed changes
