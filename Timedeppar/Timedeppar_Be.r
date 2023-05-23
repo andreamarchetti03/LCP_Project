@@ -330,8 +330,9 @@ inference <- function(name, dname_df){
     return_list <- list(df = df, df_inf = df_inf, A_inf = A_inf, ph_inf= ph_inf, inf = inf, freq_inf = freq_inf , xi_mean_inf = xi_mean_inf, xi_sd_inf = xi_sd_inf, xi_gamma_inf = xi_gamma_inf) #sigma_y left to infer
     
     
-    write.table(df, paste(dname_df,".txt",sep=''), row.names=FALSE)
-    write.table(df_inf, paste(dname_df,"_inf.txt",sep=''), row.names=FALSE)
+	write.table(df, paste(dname_df,".txt"), sep='\t', row.names=FALSE, quote = FALSE)
+    write.table(df_inf, paste(dname_df,"_inf.txt"), sep='\t', row.names=FALSE, quote = FALSE)
+	write.table(par_inf, paste(dname_df,"_par.txt"), sep='\t', row.names=FALSE, quote = FALSE)
 	
     return(return_list)
     
@@ -342,7 +343,7 @@ backup<-function(dname){
 
 	#Read data
     file <- paste(dname,'.txt', sep='')
-	file_inf <- paste(dname,'.txt', sep='')
+	file_inf <- paste(dname,'_inf.txt', sep='')
 	
 	
     df <- read.csv(file, header = T, sep = '\t')

@@ -217,7 +217,7 @@ inference <- function(name,dname_df){
     # remove burn in and apply thinning
     start <- 1 + n_adapt + 1
     end <- n_iter + 1
-    th <- 10
+    th <- 100
     
     # collect parameters
     df_inf_ou <- as.data.frame(inf$sample.param.ou[seq(start, end, th),])
@@ -325,9 +325,9 @@ inference <- function(name,dname_df){
     # Combine the results into a list
 	
 
-	write.table(df, paste(dname_df,".txt",sep=''), row.names=FALSE)
-    write.table(df_inf, paste(dname_df,"_inf.txt",sep=''), row.names=FALSE)
-	write.table(par_inf, paste(dname_df,"_par.txt",sep=''), row.names=FALSE)
+	write.table(df, paste(dname_df,".txt"), sep='\t', row.names=FALSE, quote = FALSE)
+    write.table(df_inf, paste(dname_df,"_inf.txt"), sep='\t', row.names=FALSE, quote = FALSE)
+	write.table(par_inf, paste(dname_df,"_par.txt"), sep='\t', row.names=FALSE, quote = FALSE)
 
     return_list <- list(df = df, df_inf = df_inf, par_inf = par_inf)
 
@@ -340,7 +340,7 @@ backup<-function(dname){
 
 	#Read data
     file <- paste(dname,'.txt', sep='')
-	file_inf <- paste(dname,'.txt', sep='')
+	file_inf <- paste(dname,'_inf.txt', sep='')
 	
 	
     df <- read.csv(file, header = T, sep = '\t')
@@ -349,7 +349,7 @@ backup<-function(dname){
 	df_inf <- read.csv(file_inf, header = T, sep = '\t')
     df_inf = df_inf[1:n_main,]
 
-	plot_inf(df)
+	#plot_inf(df)
 
 	return_list <- list(df = df, df_inf = df_inf)
 	return(return_list)

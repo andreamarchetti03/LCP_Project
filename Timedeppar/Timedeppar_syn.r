@@ -77,7 +77,7 @@ logprior_const <- function(param_const) {
 
 #Inference
 
-inference <- function(name, dname){
+inference <- function(name, dname_df){
     
     #Read data
     file <- paste(name,'.txt', sep='')
@@ -111,7 +111,6 @@ inference <- function(name, dname){
                             param.ou.logprior = logprior_ou,
                             n.iter = n_iter,
                             control = list(n.interval = n_interval, n.adapt = n_adapt),
-                            file.save = name,
                             data = df) 
     
     #Extract inferred data
@@ -178,8 +177,9 @@ inference <- function(name, dname){
     # Combine the results into a list
     return_list <- list(df = df, df_inf = df_inf, A_inf = A_inf, ph_inf = ph_inf, sigma_y_inf = sigma_y_inf, inf=inf)
 	
-	write.table(df, paste(dname,".txt",sep=''), row.names=FALSE)
-    write.table(df_inf, paste(dname,"_inf.txt",sep=''), row.names=FALSE)
+	write.table(df, paste(dname_df,".txt"), sep='\t', row.names=FALSE, quote = FALSE)
+    write.table(df_inf, paste(dname_df,"_inf.txt"), sep='\t', row.names=FALSE, quote = FALSE)
+	#write.table(par_inf, paste(dname_df,"_par.txt"), sep='\t', row.names=FALSE, quote = FALSE)
       
     return(return_list)
     
@@ -188,8 +188,8 @@ inference <- function(name, dname){
 backup<-function(dname){
 
 	#Read data
-    file <- paste(dname,'.txt', sep='')
-	file_inf <- paste(dname,'.txt', sep='')
+    file <- paste(dname,'.txt')
+	file_inf <- paste(dname,'_inf.txt')
 	
 	
     df <- read.csv(file, header = T, sep = '\t')
