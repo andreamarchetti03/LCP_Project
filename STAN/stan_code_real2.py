@@ -34,10 +34,10 @@ parameters {
     ordered[n] t;
 
     real<lower=0> mean;
-    real<lower=0, upper=10> sd;
-    real<lower=0, upper=200> tau;
+    real<lower=0> sd;
+    real<lower=50> tau;
 
-    real<lower=0, upper=10> sigma_y;
+    real<lower=0> sigma_y;
 
     vector<lower=0>[N_inf] freq_inf; //vector of frequencies to infer
     vector<lower=0>[N_waves] A; //vector of amplitudes
@@ -49,26 +49,32 @@ parameters {
 model {
 
     // try with normal
-    mean ~ normal(10,0.5);
-    sd ~ uniform(0, 10);
-    tau ~ uniform(1, 200);
+    //retry with unif
+    /*mean ~ normal(10,0.5);
+    sd ~ normal(2.5, 2.5);
+    tau ~ normal(50,50); 
     sigma_y ~ uniform(0, 10);
+    */
+
+    mean ~ normal(10, 0.5);
+    sd ~ gamma(3, 1);   
+    //tau ~ gamma(25, 0.025); //similar normal(2000, 300)
+    tau ~ normal(100, 20);
+    sigma_y ~ gamma(2, 10);
     
     //add priors for freq to infer
     for (j in 1:N_inf) {
-        freq_inf[j] ~ normal(freq_init[j], err_freq_init[j]);
+        freq_inf[j] ~ normal(freq_init[j], 0.2*freq_init[j]);
     }
     
 
     //add priors for A and phi (one for each component)
     for (j in 1:N_waves) {
-        A[j] ~ normal(A_init[j], err_A_init[j]);
-        phi[j] ~ normal(phi_init[j], err_phi_init[j]);
+        A[j] ~ normal(A_init[j], 0.2*A_init[j]);
+        phi[j] ~ normal(phi_init[j], 0.2*phi_init[j]);
     }
     
-    //print("log density before =", target());
 
-   
     t[1] ~ normal(10, 1);
     t[2] ~ normal(t[1] + mean, sd);
 

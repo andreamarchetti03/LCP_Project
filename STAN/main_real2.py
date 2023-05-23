@@ -21,6 +21,11 @@ from scipy.signal import welch
 from LCP_Project.STAN import stan_code_real2
 from LCP_Project.STAN import vars_real2
 
+from datetime import datetime
+
+#import multiprocessing module
+#import multiprocessing
+
 
 def infer(file_name):
 	
@@ -50,11 +55,12 @@ def infer(file_name):
 	#import data
 	data_load = np.loadtxt(file_name)
 	
-	year  = data_load[:,0]
-	cycle = data_load[:,1]
+	year  = data_load[:2000,0]
+	cycle = data_load[:2000,1]
 	
 	# move the observed signal to have 0 mean
-	cycle = cycle - np.mean(cycle)
+	#on the entire dataset to match the given amplitudes
+	cycle = cycle - np.mean(data_load[:,1])
 	
 	df_sim = pd.DataFrame(data = {'t':year, 'y':cycle})
 	
@@ -62,7 +68,6 @@ def infer(file_name):
 	data = {'n':len(year), 'y_obs':df_sim['y'].values, 'freq_fix':frequencies_fix, 'dt':dt, 
 			'N_fix':N_fix, 'N_inf':N_inf, 'N_waves':N_fix+N_inf, 'freq_init':frequencies_inf, 'err_freq_init':err_frequencies_inf, 
 			'A_init':amplitudes, 'err_A_init':err_amplitudes, 'phi_init':phases, 'err_phi_init':err_phases}
-	print(df_sim['t'])
 
 	# build the model
 	posterior = stan.build(code, data=data, random_seed=12345)
@@ -74,5 +79,21 @@ def infer(file_name):
 
 	#return also vector with fixed and inferred frequencies altogether
 	frequencies = np.append(frequencies_fix, np.mean(fit["freq_inf"], axis=1))
+
+	##### save fit to dataframe and write to csv file ######
+	##### might change, depends on memory and loading issues ####
+	##### eg see 'pickle', 'feather' #####
+
+	DateTime = datetime.now().strftime("%d_%m")
+
+	name = 'fit_df_' + DateTime + '_' + str(n_sample) + 'iter'
+
+	# TODO add to save the number of samples, chain, thinning... used
+
+	fit.to_frame().to_csv(name)
+
+	#### to import use 
+	# df_new = pd.read_csv(name, index_col='draws')
+	
 
 	return fit, year, cycle, frequencies

@@ -39,7 +39,7 @@ def visualise(inference, from_, to_, sparam):
 
 	signal(inference, from_, to_)
 	time_diff(inference, from_, to_)
-	PSD(inference)
+	#PSD(inference)
 	marginal(inference)
 	chains(inference, sparam)
 	
@@ -83,7 +83,7 @@ def time_diff(inference, from_, to_):
 	
 	dif  = year - t_mean
 
-	xi = t_mean[:-1] - t_mean[1:]
+	xi = t_mean[1:] - t_mean[:-1]
 
 	fig, ax = plt.subplots(1,2, figsize=(15,5))
 	
@@ -105,11 +105,12 @@ def PSD(inference):
 	A=np.mean(fit["A"])
 	phi=np.mean(fit["phi"])
 
-	Nwaves = len(A)
+	Nwaves = len(freq)
 	
 	# denoised signal
-	for i in range(0,Nwaves): y = y + A[i] * np.cos(2*np.pi * freq[i] * t_mean + phi[i])
-	#y = A*np.cos(2*np.pi*vars_real2.freq*t_mean + phi)
+	y = 0
+	#adattare
+	#for i in range(0,Nwaves): y = y + A[i] * np.cos(2*np.pi * freq[i] * t_mean + phi[i])
 	
 	sampling_freq = 1 / np.mean(np.diff(year))
 	freqs_, pow_ = welch(cycle, fs=sampling_freq)#, nperseg=1024)
@@ -158,7 +159,7 @@ def marginal(inference):
 	ax[1][1].hist(phi); ax[1][1].set_title("phi")
 	ax[1][2].hist(sigma_y); ax[1][2].set_title("sigma_y")
 
-	ax[2][0].hist(freq); ax[1][2].set_title("freq_inf")
+	ax[2][0].hist(freq); ax[2][0].set_title("freq_inf")
 
 
 
