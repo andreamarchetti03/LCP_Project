@@ -62,7 +62,7 @@ logprior_ou <- function(param_ou) {
     # calculate log priors for the given parameters
     log_prior_mean <- dnorm(param_ou[['xi_mean']], mean = 10, sd = 0.5, log = T)
     log_prior_sd <- dgamma(param_ou[['xi_sd']], shape = 1, rate = 2, log = T)
-    log_prior_gamma <- dinvgamma(param_ou[['xi_gamma']], shape = 25, rate= 2.5, log = T)
+    log_prior_gamma <- dinvgamma(param_ou[['xi_gamma']], shape = 25, rate= 0.5, log = T)
 
     # return result
     return(log_prior_mean + log_prior_sd + log_prior_gamma)
@@ -77,20 +77,20 @@ logprior_const <- function(param_const) {
 	
 	log_prior_A <- 0
 	for (k in 1:n_cycle){
-		log_prior_A <- log_prior_A + dnorm(param_const[[paste0('A.',k)]], mean = df_cycle[['A']][k], sd = 5*df_cycle[['sigma_A']][k], log = T)
+		log_prior_A <- log_prior_A + dnorm(param_const[[paste0('A.',k)]], mean = df_cycle[['A']][k], sd = 10*df_cycle[['sigma_A']][k], log = T)
 	}
 
 	
 	log_prior_ph <- 0
 	for (k in 1:n_cycle){
-		log_prior_ph <- log_prior_ph + dnorm(param_const[[paste0('ph.',k)]], mean = df_cycle[['ph']][k] , sd = 5*df_cycle[['sigma_ph']][k], log = T)
+		log_prior_ph <- log_prior_ph + dnorm(param_const[[paste0('ph.',k)]], mean = df_cycle[['ph']][k] , sd = 10*df_cycle[['sigma_ph']][k], log = T)
 	}
 	
 	
 	
 	log_prior_freq <- 0
 	for (k in n_fix:n_cycle){
-		log_prior_freq <- log_prior_freq + dnorm(param_const[[paste0('freq.',k)]], mean = df_cycle[['freq']][k], sd = 5*df_cycle[['sigma_f']][k], log = T)
+		log_prior_freq <- log_prior_freq + dnorm(param_const[[paste0('freq.',k)]], mean = df_cycle[['freq']][k], sd = 10*df_cycle[['sigma_f']][k], log = T)
 	}
 	
 
@@ -196,7 +196,7 @@ inference <- function(name,dname_df){
     # choose model parameters:
     xi_mean <- 10
     xi_sd <- 1
-    xi_gamma <- 1/5
+    xi_gamma <- 1/50
     
     
     #Perform Timedapper inference
@@ -248,19 +248,17 @@ inference <- function(name,dname_df){
     }
     
     #Inferred parameters
-
+	
     # A inferred parameters
 	A_inf = infer_par(names(A), df_inf)
 
 	# ph inferred parameters
 	ph_inf = infer_par(names(ph), df_inf)
-
 	
 	# freq inferred parameters
 	freq_inf = infer_par(names(freq), df_inf)
-
-	# xi parameters
 	
+	# xi parameters
     xi_inf = infer_par(names(df_inf_xi), df_inf)
     
     #xi mean
@@ -274,6 +272,8 @@ inference <- function(name,dname_df){
 	
 	#sigma_y
     sigma_y_inf=infer_par(list("sigma_y"),df_inf)
+	
+	par_inf <- c(A_inf, ph_inf, freq_inf, xi_inf, xi_mean_inf, xi_sd_inf, xi_gamma_inf, sigma_y_inf)  
 
     t_inf <- rep(1,n_main)
 
@@ -327,152 +327,31 @@ inference <- function(name,dname_df){
 
 	write.table(df, paste(dname_df,".txt",sep=''), row.names=FALSE)
     write.table(df_inf, paste(dname_df,"_inf.txt",sep=''), row.names=FALSE)
+	write.table(par_inf, paste(dname_df,"_par.txt",sep=''), row.names=FALSE)
 
-    return_list <- list(df = df, df_inf = df_inf, A_inf = A_inf, ph_inf= ph_inf, inf = inf, freq_inf = freq_inf , xi_mean_inf = xi_mean_inf, xi_sd_inf = xi_sd_inf, xi_gamma_inf = xi_gamma_inf) #sigma_y left to infer
+    return_list <- list(df = df, df_inf = df_inf, par_inf = par_inf)
 
       
     return(return_list)
     
 }
 
-
-backup<-function(name,dname){
+backup<-function(dname){
 
 	#Read data
+    file <- paste(dname,'.txt', sep='')
+	file_inf <- paste(dname,'.txt', sep='')
 	
-    file <- paste(name,'.txt', sep='')
-	file_str <- paste('Data/',file,sep='')
-    df <- read.csv(file_str, header = T, sep = '\t')
 	
+    df <- read.csv(file, header = T, sep = '\t')
     df = df[1:n_main,]
 	
-	#Shift data around 0 
-	mean_y = mean(df$y_obs)
-	df$y_obs = df$y_obs - mean_y
+	df_inf <- read.csv(file_inf, header = T, sep = '\t')
+    df_inf = df_inf[1:n_main,]
 
-	# import inferred dataframe
-	inf <- load(paste0(dname, '.RData'))
-	
-	print(inf)
-	#Extract inferred data
-    
-    # remove burn in and apply thinning
-    start <- 1 + n_adapt + 1
-    end <- n_iter + 1
-    th <- 10
-    
-    # collect parameters
-    df_inf_ou <- inf$sample.param.ou[seq(start, end, th),]
-    df_inf_const <- inf$sample.param.const[seq(start, end, th),]
-    df_inf_xi <- inf$sample.param.timedep[[1]][seq(start+1, end+1, th),]
-	
-	
-	#Name xi sequence
-    names(df_inf_xi) <- paste0(rep('xi.', n_main), as.character(seq(1, n_main)))
-    df_inf <- cbind(df_inf_ou, df_inf_const, df_inf_xi)
-    
-    
-    #Function to infer mean of parameters from results file
-
-    infer_par <- function(names, data) {
-	
-		par_inf <- NULL
-
-		for (name in names) {
-			param <- quantile(data[[name]], probs = 0.5)
-			names(param) <- name
-			par_inf <- append(par_inf, param)
-		}
-
-		return(par_inf)
-
-
-    }
-	
-	#Inferred parameters
-
-    # A inferred parameters
-	A_inf = infer_par(names(A), df_inf)
-
-	# ph inferred parameters
-	ph_inf = infer_par(names(ph), df_inf)
-
-	
-	# freq inferred parameters
-	freq_inf = infer_par(names(freq), df_inf)
-
-	# xi parameters
-	
-    xi_inf = infer_par(names(df_inf_xi), df_inf)
-    
-    #xi mean
-    xi_mean_inf=infer_par(list("xi_mean"),df_inf)
-	
-	#xi sd
-    xi_sd_inf=infer_par(list("xi_sd"),df_inf)
-	
-	#xi gamma
-    xi_gamma_inf=infer_par(list("xi_gamma"),df_inf)
-	
-	#sigma_y
-    sigma_y_inf=infer_par(list("sigma_y"),df_inf)
-	
-	t_inf <- rep(1,n_main)
-
-    t_inf[1]=xi_inf[1]
-
-    for (i in 2:n_main) {
-        t_inf[i]=t_inf[i-1]+xi_inf[i]
-	}
-    
-    df$xi_inf <- xi_inf
-    names(df$xi_inf)= 'xi_inf'
-    
-    df$t_inf <- t_inf
-    names(df$t_inf)= 't_inf'
-	
-	#Estimates y_fit and y_o
-	
-	y_d = rep(0, n_main)
-	y_or = rep(0, n_main)
-	
-	
-	#New version
-	for (j in 1:(n_fix-1)){
-		y_d <- y_d + A_inf[j]*cos(2*pi*freq_i[j]*t_inf + ph_inf[j])
-		y_or <- y_or + A[j]*cos(2*pi*freq_i[j]*df$t + ph[j])
-		
-	}
-
-	
-	for (j in n_fix:n_cycle){
-		y_d <- y_d + A_inf[j]*cos(2*pi*freq_inf[j-(n_fix-1)]*t_inf + ph_inf[j])
-		y_or <- y_or + A[j]*cos(2*pi*freq_i[j]*df$t + ph[j])
-	}	
-	
-	df$y_d <- y_d
-	df$y_or <- y_or
-	
-	
-	#Estimates difference between original and inferred times
-
-    df$t_diff <- df$t - df$t_inf
-	
-    
 	plot_inf(df)
-	plot_hist(df_inf)
-	plot_multi_chain(df_inf)
-	
-	
-    # Combine the results into a list
-	
-	write.table(df, paste(dname_df,".txt",sep=''), row.names=FALSE)
-    write.table(df_inf, paste(dname_df,"_inf.txt",sep=''), row.names=FALSE)
-	
-	
-    return_list <- list(df = df, df_inf = df_inf, A_inf = A_inf, ph_inf= ph_inf, inf = inf, freq_inf = freq_inf , xi_mean_inf = xi_mean_inf, xi_sd_inf = xi_sd_inf, xi_gamma_inf = xi_gamma_inf) #sigma_y left to infer
 
+	return_list <- list(df = df, df_inf = df_inf)
+	return(return_list)
 
-	
-    return(return_list)
 }
