@@ -165,23 +165,3 @@ plot_chain_acf <- function(data_inf){
 	}
 }
 
-
-backup<-function(dname){
-
-	#Read data
-    file <- paste(dname,'.txt', sep='')
-	file_inf <- paste(dname,'.txt', sep='')
-	
-	
-    df <- read.csv(file, header = T, sep = '\t')
-    df = df[1:n_main,]
-	
-	df_inf <- read.csv(file_inf, header = T, sep = '\t')
-    df_inf = df_inf[1:n_main,]
-
-	plot_inf(df)
-
-	return_list <- list(df = df, df_inf = df_inf)
-	return(return_list)
-
-}
