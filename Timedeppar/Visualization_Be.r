@@ -1,3 +1,7 @@
+# Install and load the astsa package
+install.packages("astsa")
+library(astsa)
+
 
 
 # Plot functions
@@ -168,4 +172,14 @@ plot_chain_acf <- function(data_inf){
 		acf(data_inf[[name_inf[i]]], lag = length(data_inf[[name_inf[i]]]) - 1,
 			main = 'Autocorrelation', xlab = 'lag', ylab = name_inf[[i]], col = col_blue)
 	}
+}
+
+speck <-function(data){
+
+	# Compute the Lomb-Scargle periodogram
+	lsp <- LombScargle(data$t_inf, data$y_d)
+
+	# Plot the Lomb-Scargle periodogram
+	plot(lsp$freq, lsp$spec, type = "l", xlab = "Frequency", ylab = "Power Spectral Density")
+
 }

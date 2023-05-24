@@ -12,6 +12,9 @@ n_main <- 1849
 # read cycle parameters
 df_cycle <- read.csv('Data/Be_cycles.txt', header = T, sep = '\t')
 
+# read cycle parameters
+#df_hulk <- read.csv('Data/Be_corr.txt', header = T, sep = '\t')
+
 
 n_cycle <- length(df_cycle$freq)
 df_cycle = df_cycle[1:n_cycle,]
