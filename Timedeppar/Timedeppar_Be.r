@@ -197,8 +197,15 @@ inference <- function(name, dname_df){
 		freq_range <- append(freq_range, par_range) 
 	}
 	
+	# freq parameters range
+	xi_range <- NULL
+	for (i in 1:n_main) {
+		par_range <- list(c(0,20))
+		xi_range <- append(xi_range, par_range) 
+	}
+	
 
-	param_range <- c(param_range, A_range, ph_range, freq_range)
+	param_range <- c(xi_range ,param_range, A_range, ph_range, freq_range)
     
     # choose model parameters:
     xi_mean <- mean(df$init)
@@ -280,8 +287,10 @@ inference <- function(name, dname_df){
 	
 	#sigma_y
     sigma_y_inf=infer_par(list("sigma_y"),df_inf)
+
     
     par_inf<- c(A_inf,ph_inf,freq_inf,xi_inf, xi_mean_inf,xi_sd_inf,xi_gamma_inf,sigma_y_inf)
+
 
     t_inf <- rep(1,n_main)
 
@@ -290,6 +299,9 @@ inference <- function(name, dname_df){
     for (i in 2:n_main) {
         t_inf[i]=t_inf[i-1]+xi_inf[i]
 	}
+	
+	
+	
     
     df$xi_inf <- xi_inf
     names(df$xi_inf)= 'xi_inf'
@@ -329,7 +341,9 @@ inference <- function(name, dname_df){
 	
 	plot_inf(df)
 
+
     return_list <- list(df = df, df_inf = df_inf, par_inf=par_inf) #sigma_y left to infer
+
     
     
 	write.table(df, paste(dname_df,".txt"), sep='\t', row.names=FALSE, quote = FALSE)

@@ -16,6 +16,9 @@ df_hulk$y_d<-df_hulk$y_d-mean(df_hulk$y_d)
 df_hulk$t_inf <-df_hulk$t_inf - (df_hulk$t_inf[1] - 2)
 
 
+# read cycle parameters
+#df_hulk <- read.csv('Data/Be_corr.txt', header = T, sep = '\t')
+
 
 n_cycle <- length(df_cycle$freq)
 df_cycle = df_cycle[1:n_cycle,]

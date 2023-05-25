@@ -1,3 +1,7 @@
+# Install and load the astsa package
+install.packages("astsa")
+library(astsa)
+
 
 
 # Plot functions
@@ -159,12 +163,7 @@ plot_chain_acf <- function(data_inf){
 	options(repr.plot.width = 15, repr.plot.height = 5)
     par(mar = c(5.1, 6.1, 4.1, 2.1))
     name_inf = c("xi_mean","xi_gamma", "xi_sd", "sigma_y", "A.1", "ph.1", "freq.8")
-<<<<<<< Updated upstream
 
-=======
-    #name_title= c(expression(bold(symbol(x)[mean] ~inferred))),"c","c","c","c","c","c")
-                  
->>>>>>> Stashed changes
 	l <-length(data_inf$xi_mean)
 	x_chain<-seq(1,l,1)  #Put 10 for correct iteration number?
 	
@@ -179,6 +178,7 @@ plot_chain_acf <- function(data_inf){
 			main = 'Autocorrelation', xlab = 'lag', ylab = name_inf[[i]], col = col_blue)
 	}
 }
+
 
 
 
@@ -201,4 +201,14 @@ plot_chain_all <- function(data_inf){
 		acf(data_inf[[name_inf[i]]], lag = length(data_inf[[name_inf[i]]]) - 1,
 			main = 'Autocorrelation', xlab = 'lag', ylab = name_inf[[i]], col = col_blue)
 	}
+
+speck <-function(data){
+
+	# Compute the Lomb-Scargle periodogram
+	lsp <- LombScargle(data$t_inf, data$y_d)
+
+	# Plot the Lomb-Scargle periodogram
+	plot(lsp$freq, lsp$spec, type = "l", xlab = "Frequency", ylab = "Power Spectral Density")
+
+
 }
