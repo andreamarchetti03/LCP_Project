@@ -1,11 +1,6 @@
-# Install and load the astsa package
-install.packages("astsa")
-library(astsa)
-
 
 
 # Plot functions
-
 
 #Plot original data
 
@@ -44,7 +39,7 @@ plot_inf <- function(data){
 		 
 	plot(data$t, data$y_obs, main = "Denoised data", 
          xlab = "t", ylab = expression(y[obs]), 
-         xlim = c(6000, 7000), ylim = c(-2, 2),
+         xlim = c(6000, 6500), ylim = c(-2, 2),
          type = 'l', lty = 1, lwd = 2, col = col_blue,
          cex.main = 2, cex.lab = 1.7, cex.axis = 1.5)
     lines(df_hulk$t_inf, df_hulk$y_d,   
@@ -181,7 +176,6 @@ plot_chain_acf <- function(data_inf){
 
 
 
-
 plot_chain_all <- function(data_inf){
 
 	options(repr.plot.width = 15, repr.plot.height = 5)
@@ -200,17 +194,34 @@ plot_chain_all <- function(data_inf){
 		# autocorrelation
 		acf(data_inf[[name_inf[i]]], lag = length(data_inf[[name_inf[i]]]) - 1,
 			main = 'Autocorrelation', xlab = 'lag', ylab = name_inf[[i]], col = col_blue)
-	}	
+	}
 }
 
 
-speck <-function(data){
+plot_freq<-function(data_inf){
+    options(repr.plot.width = 15, repr.plot.height = 5)
+    par(mar = c(5.1, 6.1, 4.1, 2.1))
+    name_inf = c("freq.6","freq.7", "freq.8")
 
-	# Compute the Lomb-Scargle periodogram
-	lsp <- LombScargle(data$t_inf, data$y_d)
-
-	# Plot the Lomb-Scargle periodogram
-	plot(lsp$freq, lsp$spec, type = "l", xlab = "Frequency", ylab = "Power Spectral Density")
-
-
+	l <-length(data_inf$xi_mean)
+	x_chain<-seq(1,l,1)  #Put 10 for correct iteration number?
+	
+    for (i in 1:3){
+        
+		plot(x_chain,data_inf[[name_inf[i]]],main=paste0("chain of", " ", name_inf[[i]]),
+             col=col_blue,ylim=c(0,0.012))
+        abline(h = median(data_inf[[name_inf[i]]]), col = "yellow", lty = 2, lwd = 2)
+        abline(h = freq_hulk[i], col = col_green, lty = 2, lwd = 2)
+        abline(h = freq_i[i+5], col = "red", lty = 2, lwd = 2)
+        
+				
+		# autocorrelation
+		acf(data_inf[[name_inf[i]]], lag = length(data_inf[[name_inf[i]]]) - 1,
+			main = 'Autocorrelation', xlab = 'lag', ylab = name_inf[[i]], col = col_blue)
+        
+       
+	}
 }
+
+
+    
