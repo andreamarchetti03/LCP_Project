@@ -44,17 +44,22 @@ plot_inf <- function(data){
 		 
 	plot(data$t, data$y_obs, main = "Denoised data", 
          xlab = "t", ylab = expression(y[obs]), 
-         xlim = c(0, 9500), ylim = c(-2, 2),
+         xlim = c(6000, 7000), ylim = c(-2, 2),
          type = 'l', lty = 1, lwd = 2, col = col_blue,
          cex.main = 2, cex.lab = 1.7, cex.axis = 1.5)
+    lines(df_hulk$t_inf, df_hulk$y_d,   
+         type = 'l', lty = 1, lwd = 4, col = "black",
+         cex.main = 2, cex.lab = 1.7, cex.axis = 1.5)
 		 
-	lines(data$t, data$y_o,   
+	lines(data$t, data$y_or,   
          type = 'l', lty = 1, lwd = 3, col = col_green,
          cex.main = 2, cex.lab = 1.7, cex.axis = 1.5)
 		 
 	lines(data$t_inf, data$y_d,   
          type = 'l', lty = 1, lwd = 4, col = col_red,
          cex.main = 2, cex.lab = 1.7, cex.axis = 1.5)
+
+    
 
 
 
@@ -174,6 +179,29 @@ plot_chain_acf <- function(data_inf){
 	}
 }
 
+
+
+
+plot_chain_all <- function(data_inf){
+
+	options(repr.plot.width = 15, repr.plot.height = 5)
+    par(mar = c(5.1, 6.1, 4.1, 2.1))
+    name_inf = names(data_inf)
+
+	l <-length(data_inf$xi_mean)
+	x_chain<-seq(1,l,1)  #Put 10 for correct iteration number?
+	
+    for (i in 1:24){
+		par(mfrow = c(1,2))
+		plot(x_chain,data_inf[[name_inf[i]]],main=paste0("chain of", " ", name_inf[[i]]),
+             col=col_blue)
+        abline(h = median(data_inf[[name_inf[i]]]), col = col_green, lty = 2, lwd = 2)
+				
+		# autocorrelation
+		acf(data_inf[[name_inf[i]]], lag = length(data_inf[[name_inf[i]]]) - 1,
+			main = 'Autocorrelation', xlab = 'lag', ylab = name_inf[[i]], col = col_blue)
+	}
+
 speck <-function(data){
 
 	# Compute the Lomb-Scargle periodogram
@@ -181,5 +209,6 @@ speck <-function(data){
 
 	# Plot the Lomb-Scargle periodogram
 	plot(lsp$freq, lsp$spec, type = "l", xlab = "Frequency", ylab = "Power Spectral Density")
+
 
 }

@@ -287,9 +287,10 @@ inference <- function(name, dname_df){
 	
 	#sigma_y
     sigma_y_inf=infer_par(list("sigma_y"),df_inf)
-	
-	
-	par_inf <- c(A_inf, ph_inf, freq_inf, xi_inf, t_inf, xi_mean_inf, xi_sd_inf, xi_gamma_inf, sigma_y_inf)
+
+    
+    par_inf<- c(A_inf,ph_inf,freq_inf,xi_inf, xi_mean_inf,xi_sd_inf,xi_gamma_inf,sigma_y_inf)
+
 
     t_inf <- rep(1,n_main)
 
@@ -311,24 +312,24 @@ inference <- function(name, dname_df){
 	#Estimates y_fit and y_o
 	
 	y_d = rep(0, n_main)
-	y_o = rep(0, n_main)
+	y_or = rep(0, n_main)
 	print(A)
 	
 	
 	#New version
 	for (j in 1:(n_fix-1)){
 		y_d <- y_d + A_inf[j]*cos(2*pi*freq_i[j]*t_inf + ph_inf[j])
-		y_o <- y_o + A[j]*cos(2*pi*freq_i[j]*df$t + ph[j])
+		y_or <- y_or + A[j]*cos(2*pi*freq_i[j]*df$t + ph[j])
 	}
 
 	
 	for (j in n_fix:n_cycle){
 		y_d <- y_d + A_inf[j]*cos(2*pi*freq_inf[j-(n_fix-1)]*t_inf + ph_inf[j])
-		y_o <- y_o + A[j]*cos(2*pi*freq_i[j]*df$t + ph[j])
+		y_or <- y_or + A[j]*cos(2*pi*freq_i[j]*df$t + ph[j])
 	}	
 	
 	df$y_d <- y_d
-	df$y_o <- y_o
+	df$y_or <- y_or
 	
 	#Estimates difference between original and inferred times
 
@@ -340,7 +341,9 @@ inference <- function(name, dname_df){
 	
 	plot_inf(df)
 
-    return_list <- list(df = df, df_inf = df_inf, par_inf) #sigma_y left to infer
+
+    return_list <- list(df = df, df_inf = df_inf, par_inf=par_inf) #sigma_y left to infer
+
     
     
 	write.table(df, paste(dname_df,".txt"), sep='\t', row.names=FALSE, quote = FALSE)
