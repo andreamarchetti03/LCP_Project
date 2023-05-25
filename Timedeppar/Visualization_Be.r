@@ -159,7 +159,12 @@ plot_chain_acf <- function(data_inf){
 	options(repr.plot.width = 15, repr.plot.height = 5)
     par(mar = c(5.1, 6.1, 4.1, 2.1))
     name_inf = c("xi_mean","xi_gamma", "xi_sd", "sigma_y", "A.1", "ph.1", "freq.8")
+<<<<<<< Updated upstream
 
+=======
+    #name_title= c(expression(bold(symbol(x)[mean] ~inferred))),"c","c","c","c","c","c")
+                  
+>>>>>>> Stashed changes
 	l <-length(data_inf$xi_mean)
 	x_chain<-seq(1,l,1)  #Put 10 for correct iteration number?
 	
