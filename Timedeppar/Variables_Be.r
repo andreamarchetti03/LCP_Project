@@ -10,8 +10,8 @@ col_grey <- '#C8CED0'  #gray
 n_main <- 1849
 
 # read cycle parameters
-df_cycle <- read.csv('Data/Be_cycles.txt', header = T, sep = '\t')
-df_hulk<-read.csv('Data/Becorr.txt', header = T, sep = '\t')
+df_cycle <- read.csv('LCP_Project/Timedeppar/Data/Be_cycles.txt', header = T, sep = '\t')
+df_hulk<-read.csv('LCP_Project/Timedeppar/Data/Becorr.txt', header = T, sep = '\t')
 df_hulk$y_d<-df_hulk$y_d-mean(df_hulk$y_d)
 df_hulk$t_inf <-df_hulk$t_inf - (df_hulk$t_inf[1] - 2)
 
@@ -36,7 +36,7 @@ freq_i <- df_cycle$freq
 
 n_iter <- 400000
 n_interval <- 20
-n_adapt <- 120000
-n_adapt_cov <- 500
+n_adapt <- 200000
+n_adapt_cov <- 1000
 
 
