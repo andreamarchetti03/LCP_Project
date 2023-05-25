@@ -28,18 +28,18 @@ from datetime import datetime
 
 
 def infer(file_name):
+
+	N_fix = vars_real2.N_fix
+	N_inf = vars_real2.N_inf       #number of frequencies to infer
 	
-	frequencies_fix = vars_real2.frequencies[0:6]
-	err_frequencies_fix = vars_real2.err_frequencies[0:6]
-	frequencies_inf = vars_real2.frequencies[6:]
-	err_frequencies_inf = vars_real2.err_frequencies[6:]
+	frequencies_fix = vars_real2.frequencies[0:N_fix]
+	err_frequencies_fix = vars_real2.err_frequencies[0:N_fix]
+	frequencies_inf = vars_real2.frequencies[N_fix:]
+	err_frequencies_inf = vars_real2.err_frequencies[N_fix:]
 	amplitudes = vars_real2.amplitudes
 	err_amplitudes = vars_real2.err_amplitudes
 	phases = vars_real2.phases
 	err_phases = vars_real2.err_phases
-
-	N_fix = len(frequencies_fix)
-	N_inf = 14       #number of frequencies to infer
 
 	dt = vars_real2.dt	
 
