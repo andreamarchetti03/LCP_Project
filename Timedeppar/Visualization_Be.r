@@ -200,7 +200,9 @@ plot_chain_all <- function(data_inf){
 		# autocorrelation
 		acf(data_inf[[name_inf[i]]], lag = length(data_inf[[name_inf[i]]]) - 1,
 			main = 'Autocorrelation', xlab = 'lag', ylab = name_inf[[i]], col = col_blue)
-	}
+	}	
+}
+
 
 speck <-function(data){
 
