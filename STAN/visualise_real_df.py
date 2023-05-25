@@ -21,6 +21,10 @@ def init(data, df_inference):
 	year  = data_load[:len(t_mean),0]
 	cycle = data_load[:len(t_mean),1]
 
+	# move the observed signal to have 0 mean
+	# as done to infer
+	cycle = cycle - np.mean(cycle)
+
 	frequencies_fix = vars_real2.frequencies[0:6]  
 
 	#return also vector with fixed and inferred frequencies altogether
@@ -136,8 +140,7 @@ def PSD(data, inference):
 	
 	# denoised signal
 	y = 0
-	#adattare
-	#for i in range(0,Nwaves): y = y + A[i] * np.cos(2*np.pi * freq[i] * t_mean + phi[i])
+	for i in range(0,Nwaves): y = y + A[i] * np.cos(2*np.pi * freq[i] * t_mean + phi[i])
 	
 	sampling_freq = 1 / np.mean(np.diff(year))
 	freqs_, pow_ = welch(cycle, fs=sampling_freq)#, nperseg=1024)
