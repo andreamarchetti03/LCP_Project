@@ -143,11 +143,15 @@ def marginal(inference):
 	ax[1][2].hist(sigma_y); ax[1][2].set_title("sigma_y")
 	
 	
-def chains(inference, sparam):
+def chains(inference, sparam, timestep=None):
 
 	fit, year, t_mean, cycle = init(inference)
 	
-	param = fit[sparam][0]
+	if sparam == 't':
+		param = fit[sparam][timestep]
+	
+	else:
+		param = fit[sparam][0]
 
 	param_chains = split(param, vars.n_chains)
 	

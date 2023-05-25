@@ -23,3 +23,6 @@ n_sample = 4000
 
 #### con 40+80 iterazioni 1 catena funziona in circa 10 min ####
 #### anche con 240 interazioni ####
+
+N_fix = 6
+N_inf = 14
