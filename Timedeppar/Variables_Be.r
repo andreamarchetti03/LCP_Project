@@ -11,6 +11,10 @@ n_main <- 1849
 
 # read cycle parameters
 df_cycle <- read.csv('Data/Be_cycles.txt', header = T, sep = '\t')
+df_hulk<-read.csv('Data/Becorr.txt', header = T, sep = '\t')
+df_hulk$y_d<-df_hulk$y_d-mean(df_hulk$y_d)
+df_hulk$t_inf <-df_hulk$t_inf - (df_hulk$t_inf[1] - 2)
+
 
 
 n_cycle <- length(df_cycle$freq)
@@ -29,7 +33,7 @@ freq_i <- df_cycle$freq
 
 n_iter <- 400000
 n_interval <- 20
-n_adapt <- floor(0.2*n_iter)
+n_adapt <- 120000
 n_adapt_cov <- 500
 
 
