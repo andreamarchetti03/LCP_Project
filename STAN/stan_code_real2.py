@@ -35,7 +35,7 @@ parameters {
 
     real<lower=0> mean;
     real<lower=0> sd;
-    real<lower=50> tau;
+    real<lower=0> tau;
 
     real<lower=0> sigma_y;
 
@@ -55,27 +55,28 @@ model {
     tau ~ normal(50,50); 
     sigma_y ~ uniform(0, 10);
     */
+    //for sd we can try with jeffrey's prior: 1/sd
 
-    mean ~ normal(10, 0.5);
-    sd ~ gamma(3, 1);   
+    mean ~ normal(5, 1);
+    sd ~ gamma(1, 1);   
     //tau ~ gamma(25, 0.025); //similar normal(2000, 300)
-    tau ~ normal(100, 20);
-    sigma_y ~ gamma(2, 10);
+    tau ~ normal(100, 40);
+    sigma_y ~ gamma(1, 1);
     
     //add priors for freq to infer
     for (j in 1:N_inf) {
-        freq_inf[j] ~ normal(freq_init[j], 0.2*freq_init[j]);
+        freq_inf[j] ~ normal(freq_init[j], 0.5*freq_init[j]);
     }
     
 
     //add priors for A and phi (one for each component)
     for (j in 1:N_waves) {
-        A[j] ~ normal(A_init[j], 0.2*A_init[j]);
-        phi[j] ~ normal(phi_init[j], 0.2*phi_init[j]);
+        A[j] ~ normal(A_init[j], 0.5*A_init[j]);
+        phi[j] ~ normal(phi_init[j], 0.5*phi_init[j]);
     }
     
-
-    t[1] ~ normal(10, 1);
+    //adjust
+    t[1] ~ normal(304.47, 1);
     t[2] ~ normal(t[1] + mean, sd);
 
     for (i in 1:n-2) {

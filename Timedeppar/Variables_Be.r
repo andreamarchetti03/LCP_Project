@@ -17,6 +17,7 @@ hulk_cycle <- read.csv('LCP_Project/Timedeppar/Data/hulk_cycle.txt', header = T,
 df_hulk<-read.csv('LCP_Project/Timedeppar/Data/Becorr.txt', header = T, sep = '\t')
 df_hulk$y_d<-df_hulk$y_d-mean(df_hulk$y_d)
 
+
 n_cycle <- length(df_cycle$freq)
 df_cycle = df_cycle[1:n_cycle,]
 n_fix <- 6
@@ -24,6 +25,7 @@ n_fix <- 6
 #frequencies
 freq_i <- df_cycle$freq
 freq_hulk <- hulk_cycle$freq
+
 
 
 

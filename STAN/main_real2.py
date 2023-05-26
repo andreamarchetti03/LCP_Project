@@ -28,18 +28,22 @@ from datetime import datetime
 
 
 def infer(file_name):
+
+	N_fix = vars_real2.N_fix
+	N_inf = vars_real2.N_inf       #number of frequencies to infer
 	
-	frequencies_fix = vars_real2.frequencies[0:6]
-	err_frequencies_fix = vars_real2.err_frequencies[0:6]
-	frequencies_inf = vars_real2.frequencies[6:]
-	err_frequencies_inf = vars_real2.err_frequencies[6:]
+	frequencies_fix = vars_real2.frequencies[0:5]
+	err_frequencies_fix = vars_real2.err_frequencies[0:5]
+	frequencies_inf = vars_real2.frequencies[5:]
+	err_frequencies_inf = vars_real2.err_frequencies[5:]
+
 	amplitudes = vars_real2.amplitudes
 	err_amplitudes = vars_real2.err_amplitudes
 	phases = vars_real2.phases
 	err_phases = vars_real2.err_phases
 
 	N_fix = len(frequencies_fix)
-	N_inf = 14       #number of frequencies to infer
+	N_inf = 3       #number of frequencies to infer
 
 	dt = vars_real2.dt	
 
@@ -55,8 +59,8 @@ def infer(file_name):
 	#import data
 	data_load = np.loadtxt(file_name)
 	
-	year  = data_load[:2000,0]
-	cycle = data_load[:2000,1]
+	year  = data_load[:,0]
+	cycle = data_load[:,1]
 	
 	# move the observed signal to have 0 mean
 	#on the entire dataset to match the given amplitudes
@@ -86,9 +90,9 @@ def infer(file_name):
 
 	DateTime = datetime.now().strftime("%d_%m")
 
-	name = 'fit_df_' + DateTime + '_' + str(n_sample) + 'iter'
+	name = 'fit_df_Be_' + DateTime + '_' + str(n_sample) + 'iter'
 
-	# TODO add to save the number of samples, chain, thinning... used
+	#TODO add to save the number of samples, chain, thinning... used
 
 	fit.to_frame().to_csv(name)
 

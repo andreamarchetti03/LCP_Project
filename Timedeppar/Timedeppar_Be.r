@@ -55,11 +55,11 @@ loglikeli <- function(param, data) {
 logprior_ou <- function(param_ou) {
 
     # calculate log priors for the given parameters
-    log_prior_mean <- dnorm(param_ou[['xi_mean']], mean =5, sd = 1, log = T)
+    log_prior_mean <- dnorm(param_ou[['xi_mean']], mean =5, sd = 0.05, log = T)
 
-     log_prior_sd <- dgamma(param_ou[['xi_sd']], shape = 1, rate = 1, log = T)
+     log_prior_sd <- dgamma(param_ou[['xi_sd']], shape = 0.1, rate = 0.01, log = T)
     
-    log_prior_gamma <- dinvgamma(param_ou[['xi_gamma']], shape =1.25, rate = 0.125, log = T)
+    log_prior_gamma <- dinvgamma(param_ou[['xi_gamma']], shape = 1.25, rate = 0.0125, log = T)
     
     # return result
     return(log_prior_mean + log_prior_sd + log_prior_gamma)
@@ -70,7 +70,7 @@ logprior_ou <- function(param_ou) {
 logprior_const <- function(param_const) {
 	
     # calculate priors
-    log_prior_sigma_y <- dgamma(param_const[['sigma_y']], shape = 1, rate = 1, log = T)
+    log_prior_sigma_y <- dunif(param_const[['sigma_y']], min = 0, max = 1, log = T)
 	
 	log_prior_A <- 0
 	for (k in 1:n_cycle){
@@ -102,9 +102,8 @@ inference <- function(name, dname_df){
 	
 	#Shift data around 0 
 	mean_y = mean(df$y_obs)
-	df$y_obs = df$y_obs - mean_y
-	
-    
+	df$y_obs = df$y_obs - mean(df$y_obs)
+	  
     #Inizialization of xi parameters
 	
 	xi_init <- NULL
@@ -149,7 +148,7 @@ inference <- function(name, dname_df){
 	
 	
     # ranges of constant parameters
-	param_range <- list('sigma_y' = c(0,2))
+	param_range <- list('sigma_y' = c(0,1))
 
 	# A parameters range
 	A_range <- NULL
@@ -171,25 +170,19 @@ inference <- function(name, dname_df){
 	# freq parameters range
 	freq_range <- NULL
 	for (i in n_fix:n_cycle) {
-		par_range <- list(c(0,0.05))
+		par_range <- list(c(0,0.02))
 		names(par_range) <- paste0('freq.',i)
 		freq_range <- append(freq_range, par_range) 
 	}
 	
-	# freq parameters range
-	xi_range <- NULL
-	for (i in 1:n_main) {
-		par_range <- list(c(0,20))
-		xi_range <- append(xi_range, par_range) 
-	}
-	
 
-	param_range <- c(xi_range ,param_range, A_range, ph_range, freq_range)
+	param_range <- c(param_range, A_range, ph_range, freq_range)
     
     # choose model parameters:
     xi_mean <- mean(df$init)
     xi_sd <- sd(df$init)
     xi_gamma <- 1/10
+
     
     
     #Perform Timedapper inference
@@ -265,7 +258,7 @@ inference <- function(name, dname_df){
 	
 	#sigma_y
     sigma_y_inf=infer_par(list("sigma_y"),df_inf)
-   
+
     par_inf<- c(A_inf,ph_inf,freq_inf,xi_inf, xi_mean_inf,xi_sd_inf,xi_gamma_inf,sigma_y_inf)
 
     t_inf <- rep(1,n_main)
@@ -275,7 +268,6 @@ inference <- function(name, dname_df){
     for (i in 2:n_main) {
         t_inf[i]=t_inf[i-1]+xi_inf[i]
 	}
-	   
     df$xi_inf <- xi_inf
     names(df$xi_inf)= 'xi_inf'
     
@@ -309,13 +301,13 @@ inference <- function(name, dname_df){
 	
 	plot_inf(df)
 
-    return_list <- list(df = df, df_inf = df_inf, par_inf=par_inf)
-   
+  return_list <- list(df = df, df_inf = df_inf, par_inf=par_inf)
+
 	write.table(df, paste(dname_df,".txt"), sep='\t', row.names=FALSE, quote = FALSE)
-    write.table(df_inf, paste(dname_df,"_inf.txt"), sep='\t', row.names=FALSE, quote = FALSE)
+  write.table(df_inf, paste(dname_df,"_inf.txt"), sep='\t', row.names=FALSE, quote = FALSE)
 	write.table(par_inf, paste(dname_df,"_par.txt"), sep='\t', row.names=FALSE, quote = FALSE)
 	
-    return(return_list)
+  return(return_list)
     
 }
 
