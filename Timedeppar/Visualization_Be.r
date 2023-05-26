@@ -35,18 +35,17 @@ plot_inf <- function(data){
 
     lines(data$t_inf, data$y_obs,   
          type = 'l', lty = 1, lwd = 2, col = col_red,
-         cex.main = 2, cex.lab = 1.7, cex.axis = 1.5)
-		 
-	plot(data$t, data$y_obs, main = "Denoised data", 
+         cex.main = 2, cex.lab = 1.7, cex.axis = 1.5)	 
+	plot((data$t), data$y_obs, main = "Denoised data", 
          xlab = "t", ylab = expression(y[obs]), 
-         xlim = c(6000, 6500), ylim = c(-2, 2),
+         xlim = c(0, 9500), ylim = c(-2, 2),
          type = 'l', lty = 1, lwd = 2, col = col_blue,
          cex.main = 2, cex.lab = 1.7, cex.axis = 1.5)
     lines(df_hulk$t_inf, df_hulk$y_d,   
-         type = 'l', lty = 1, lwd = 4, col = "black",
+         type = 'l', lty = 1, lwd = 2, col = "black",
          cex.main = 2, cex.lab = 1.7, cex.axis = 1.5)
 		 
-	lines(data$t, data$y_or,   
+	lines(((data$t)), data$y_or,   
          type = 'l', lty = 1, lwd = 3, col = col_green,
          cex.main = 2, cex.lab = 1.7, cex.axis = 1.5)
 		 
@@ -93,7 +92,7 @@ plot_chain<-function(par_inf){
 
 	
 	l <-length(par_inf)
-	x_chain<-seq(1,l,1)
+	x_chain<-seq(0,l*50,50)
 
 
 	options(repr.plot.width = 15, repr.plot.height = 5)
@@ -108,7 +107,7 @@ plot_multi_chain<-function(par_inf){
     name_par_inf=c("xi mean","xi_gamma", "xi_sd", "A.1", "ph.1", "freq.8")
 	l <-length(par_inf$xi_mean)
     print(l)
-	x_chain<-seq(1,l,1)
+	x_chain<-seq(0,l*50,50)
 	plot(x_chain,par_inf$xi_mean,main=paste0("chain of", " ", name_par_inf[[1]]),
          col=col_blue,cex.main = 2, cex.lab = 1.7, cex.axis = 1.5)
     plot(x_chain,par_inf$xi_gamma,main=paste0("chain of", " ", name_par_inf[[2]]),
@@ -160,12 +159,12 @@ plot_chain_acf <- function(data_inf){
     name_inf = c("xi_mean","xi_gamma", "xi_sd", "sigma_y", "A.1", "ph.1", "freq.8")
 
 	l <-length(data_inf$xi_mean)
-	x_chain<-seq(1,l,1)  #Put 10 for correct iteration number?
+	x_chain<-seq(0,l*50,50)  #Put 10 for correct iteration number?
 	
     for (i in 1:length(name_inf)){
 		par(mfrow = c(1,2))
 		plot(x_chain,data_inf[[name_inf[i]]],main=paste0("chain of", " ", name_inf[[i]]),
-             col=col_blue)
+             col=col_blue, type = "l", lwd = 2)
         abline(h = median(data_inf[[name_inf[i]]]), col = col_green, lty = 2, lwd = 2)
 				
 		# autocorrelation
@@ -188,7 +187,7 @@ plot_chain_all <- function(data_inf){
     for (i in 1:24){
 		par(mfrow = c(1,2))
 		plot(x_chain,data_inf[[name_inf[i]]],main=paste0("chain of", " ", name_inf[[i]]),
-             col=col_blue)
+             col=col_blue, type = "l", lwd = 2)
         abline(h = median(data_inf[[name_inf[i]]]), col = col_green, lty = 2, lwd = 2)
 				
 		# autocorrelation
@@ -201,27 +200,36 @@ plot_chain_all <- function(data_inf){
 plot_freq<-function(data_inf){
     options(repr.plot.width = 15, repr.plot.height = 5)
     par(mar = c(5.1, 6.1, 4.1, 2.1))
-    name_inf = c("freq.6","freq.7", "freq.8")
+    name_inf = c("freq.6","freq.7")
 
 	l <-length(data_inf$xi_mean)
 	x_chain<-seq(1,l,1)  #Put 10 for correct iteration number?
+	x_chain <- x_chain * 50
 	
-    for (i in 1:3){
+    for (i in 1:2){
         
 		plot(x_chain,data_inf[[name_inf[i]]],main=paste0("chain of", " ", name_inf[[i]]),
-             col=col_blue,ylim=c(0,0.012))
-        abline(h = median(data_inf[[name_inf[i]]]), col = "yellow", lty = 2, lwd = 2)
-        abline(h = freq_hulk[i], col = col_green, lty = 2, lwd = 2)
-        abline(h = freq_i[i+5], col = "red", lty = 2, lwd = 2)
+             col=col_blue, type = "l", lwd = 2, cex.lab = 1.2, ylab = "Inf freq [1/y]", xlab = "# Iterations")
+        abline(h = median(data_inf[[name_inf[i]]]), col = "orange", lty = 1, lwd = 3)
+        abline(h = freq_hulk[11+i], col = col_green, lty = 2, lwd = 4, )
+        abline(h = freq_i[i+5], col = "red", lty = 2, lwd = 3)
+		
+	    legend(x = 'bottomleft',
+			col = c(col_blue, "orange",col_green,"red"),
+			lty = c(1,1,2,2),
+			lwd = c(2,3,4,3),
+			cex=1.2,
+			xpd = TRUE,  # Enable plotting outside the plot region
+            inset = c(0, 0.05),  # Adjust the legend position using inset coordinates
+			bty="n",
+			legend = c('Markov chain ', 'Mean value ', 'Correct freq.', "Original freq."))
         
 				
 		# autocorrelation
 		acf(data_inf[[name_inf[i]]], lag = length(data_inf[[name_inf[i]]]) - 1,
-			main = 'Autocorrelation', xlab = 'lag', ylab = name_inf[[i]], col = col_blue)
+			main = 'Autocorrelation', xlab = 'lag', ylab = name_inf[[i]], col = col_blue, cex.lab = 1.2)
         
        
 	}
 }
 
-
-    
