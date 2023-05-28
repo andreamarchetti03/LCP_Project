@@ -195,10 +195,11 @@ def marginal(data, inference):
 def chains(data, inference, sparam):
 
 	fit, year, t_mean, cycle, freq = init(data, inference)
+	n = 3 #var_real2.n_chains
 	
 	param = fit[sparam]
 
-	param_chains = split(param, vars_real2.n_chains)
+	param_chains = split(param, n)
 	
 	fig, ax = plt.subplots(1,1, figsize=(6,4))
 	
@@ -206,7 +207,7 @@ def chains(data, inference, sparam):
 	ax.set_xlabel("Iteration")
 	ax.set_ylabel("Value")
 	
-	for i in range(0,vars_real2.n_chains):
+	for i in range(0,n):
 		
 		ax.scatter(np.arange(0,vars_real2.n_sample), param_chains[i])
 		
