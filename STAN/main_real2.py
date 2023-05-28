@@ -23,20 +23,13 @@ from LCP_Project.STAN import vars_real2
 
 from datetime import datetime
 
-#import multiprocessing module
-#import multiprocessing
-
 
 def infer(file_name):
-
-	N_fix = vars_real2.N_fix
-	N_inf = vars_real2.N_inf       #number of frequencies to infer
 	
 	frequencies_fix = vars_real2.frequencies[0:5]
 	err_frequencies_fix = vars_real2.err_frequencies[0:5]
 	frequencies_inf = vars_real2.frequencies[5:]
 	err_frequencies_inf = vars_real2.err_frequencies[5:]
-
 	amplitudes = vars_real2.amplitudes
 	err_amplitudes = vars_real2.err_amplitudes
 	phases = vars_real2.phases
@@ -63,7 +56,7 @@ def infer(file_name):
 	cycle = data_load[:,1]
 	
 	# move the observed signal to have 0 mean
-	#on the entire dataset to match the given amplitudes
+	# on the entire dataset to match the given amplitudes
 	cycle = cycle - np.mean(data_load[:,1])
 	
 	df_sim = pd.DataFrame(data = {'t':year, 'y':cycle})
@@ -72,6 +65,8 @@ def infer(file_name):
 	data = {'n':len(year), 'y_obs':df_sim['y'].values, 'freq_fix':frequencies_fix, 'dt':dt, 
 			'N_fix':N_fix, 'N_inf':N_inf, 'N_waves':N_fix+N_inf, 'freq_init':frequencies_inf, 'err_freq_init':err_frequencies_inf, 
 			'A_init':amplitudes, 'err_A_init':err_amplitudes, 'phi_init':phases, 'err_phi_init':err_phases}
+
+	print("Se ti stampa questo, sta andando tutto bene")
 
 	# build the model
 	posterior = stan.build(code, data=data, random_seed=12345)
@@ -85,14 +80,10 @@ def infer(file_name):
 	frequencies = np.append(frequencies_fix, np.mean(fit["freq_inf"], axis=1))
 
 	##### save fit to dataframe and write to csv file ######
-	##### might change, depends on memory and loading issues ####
-	##### eg see 'pickle', 'feather' #####
 
 	DateTime = datetime.now().strftime("%d_%m")
 
-	name = 'fit_df_Be_' + DateTime + '_' + str(n_sample) + 'iter'
-
-	#TODO add to save the number of samples, chain, thinning... used
+	name = 'fit_df_Be_' + DateTime + '_' + str(n_sample) + 'iter_mac'
 
 	fit.to_frame().to_csv(name)
 
