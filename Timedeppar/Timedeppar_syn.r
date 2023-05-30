@@ -19,13 +19,11 @@ loglikeli <- function(param, data) {
     
     xi<-param$xi
     
-
     if ( is.matrix(xi) | is.data.frame(xi) ) {
         xi <- approx(x = xi[,1], y = xi[,2], xout = data[['t']])$y
     }
 
-    # corrupted time
-    
+    # corrupted time 
     t_corr <- rep(0, n)
     t_corr[1] <- 1
     for (i in 2:n) {
@@ -33,27 +31,23 @@ loglikeli <- function(param, data) {
     }
 
     # corrupted model
-    y_corr <- rep(0, length(t_corr))
-    
+    y_corr <- rep(0, length(t_corr)) 
     y_corr <- y_corr + A*cos(2*pi*freq_syn*t_corr + ph)
-
 
     # calculate likelihood
     log_likelihood_y <- sum(dnorm(data[['y_obs']], mean = y_corr, sd = sigma_y, log = T))
 
     # return result
-    return(log_likelihood_y)
-    
+    return(log_likelihood_y)  
 }
 
 # define priors for Orstein-Uhlenbeck parameters
-
 logprior_ou <- function(param_ou) {
 
     # calculate log priors for the given parameters
     log_prior_mean <- dnorm(param_ou[['xi_mean']], mean = 1, sd = 0.1, log = T)
-    log_prior_sd <- dunif(param_ou[['xi_sd']], min = 0, max = 1, log = T)
-    log_prior_gamma <- dunif(param_ou[['xi_gamma']], min = 1/200, max = 1, log = T)
+    log_prior_sd <- dgamma(param_ou[['xi_sd']], shape = 0.01, rate = 1, log = T)
+    log_prior_gamma <- dinvgamma(param_ou[['xi_gamma']], shape = 2, rate = 0.1, log = T)
 
     # return result
     return(log_prior_mean + log_prior_sd + log_prior_gamma)
@@ -64,19 +58,15 @@ logprior_ou <- function(param_ou) {
 logprior_const <- function(param_const) {
 
     # calculate priors
-    log_prior_sigma_y <- dunif(param_const[['sigma_y']], min = 0, max = 1, log = T)
-	#log_prior_A <- dnorm(param_const[['A']], mean = 10, sd = 1, log = T)
-	#log_prior_ph <- dnorm(param_const[['ph']], mean = 2, sd = 0.1, log = T)
+    log_prior_sigma_y <- dgamma(param_const[['sigma_y']], shape = 1, rate = 1, log = T)
+	log_prior_A <- dnorm(param_const[['A']], mean = 10, sd = 1, log = T)
+	log_prior_ph <- dnorm(param_const[['ph']], mean = 2, sd = 0.1, log = T)
 
     # return result
-    return(log_prior_sigma_y)
-
+    return(log_prior_sigma_y + log_prior_A + log_prior_ph)
 }
 
-
-
 #Inference
-
 inference <- function(name, dname_df){
     
     #Read data
@@ -88,7 +78,7 @@ inference <- function(name, dname_df){
     #Inizialization of parameters
     df$init <- rep(1, length(df$t))
     'xi' = df[,c('t','init')]       #It could also be a randOU sequence..
-    param_init <- list( 'xi' = xi ,'sigma_y' = 0.5, 'A'= 10, 'ph'= 2)
+    param_init <- list( 'xi' = xi ,'sigma_y' = 1, 'A'= 10, 'ph'= 2)
     
     #Define range of parameters
     param_range <- list('sigma_y' = c(0,1), 'A' = c(0,20), 'ph' = c(0,2*pi))
@@ -97,8 +87,8 @@ inference <- function(name, dname_df){
     
     # choose model parameters:
     xi_mean <- 1
-    xi_sd <- 0.1
-    xi_gamma <- 1/200
+    xi_sd <- 0.01
+    xi_gamma <- 10
     
     
     #Perform Timedapper inference
@@ -124,38 +114,49 @@ inference <- function(name, dname_df){
     df_inf_ou <- as.data.frame(inf$sample.param.ou[seq(start, end, th),])
     df_inf_const <- as.data.frame(inf$sample.param.const[seq(start, end, th),])
     df_inf_xi <- as.data.frame(inf$sample.param.timedep[[1]][seq(start+1, end+1, th),])
+	
     #Name xi sequence
     names(df_inf_xi) <- paste0(rep('xi.', n), as.character(seq(1, n)))
     df_inf <- cbind(df_inf_ou, df_inf_const, df_inf_xi)
-    
-    
+     
     #Function to infer mean of parameters from results file
-
-    infer_par <- function(name, data) {
-
-    par_inf <- NULL
-
-    par <- quantile(data[[name]], probs = 0.5)
-    names(par) <- name
-    par_inf <- append(par_inf, par)
-
-    return(par_inf)
+    infer_par <- function(names, data) {
+	
+		par_inf <- NULL
+		for (name in names) {
+			param <- quantile(data[[name]], probs = 0.5)
+			names(param) <- name
+			par_inf <- append(par_inf, param)
+		}
+		return(par_inf)
     }
     
-    #Ingferred parameters
+    #Ingferred cinstant parameters
 
-    A_inf = infer_par('A', df_inf)
+    A_inf = infer_par(list("A"), df_inf)
 
-    sigma_y_inf = infer_par('sigma_y', df_inf)
+    sigma_y_inf = infer_par(list("sigma_y"), df_inf)
 
-    ph_inf = infer_par('ph', df_inf)
+    ph_inf = infer_par(list("ph"), df_inf)
+	
+	# xi parameters
+    xi_inf = infer_par(names(df_inf_xi), df_inf)
+    
+    #xi mean
+    xi_mean_inf=infer_par(list("xi_mean"),df_inf)
+	
+	#xi sd
+    xi_sd_inf=infer_par(list("xi_sd"),df_inf)
+	
+	#xi gamma
+    xi_gamma_inf=infer_par(list("xi_gamma"),df_inf)
+	
+	#sigma_y
+    sigma_y_inf=infer_par(list("sigma_y"),df_inf)
+	
+	par_inf<- c(A_inf,ph_inf,xi_inf, xi_mean_inf,xi_sd_inf,xi_gamma_inf,sigma_y_inf)
 
-
-    xi_inf <- rep(0, 500)
-
-    for (i in 1:500) 
-        xi_inf[i] = infer_par(paste('xi.',i,sep=''), df_inf)
-
+	#Inferred times
     t_inf <- rep(1,500)
 
     t_inf[1]=xi_inf[1]
@@ -168,18 +169,23 @@ inference <- function(name, dname_df){
     
     df$t_inf <- t_inf
     names(df$t_inf)= 't_inf'
-
-    df$t_diff <- df$t - df$t_inf
 	
+	#Estimates y denoised
+	y_d = rep(0, n)
+
+	y_d <- y_d + A_inf*cos(2*pi* freq_syn* t_inf + ph_inf)
+		
+	df$y_d <- y_d
+    df$t_diff <- df$t - df$t_inf
 	
 	plot_inf(df)
     
     # Combine the results into a list
-    return_list <- list(df = df, df_inf = df_inf, A_inf = A_inf, ph_inf = ph_inf, sigma_y_inf = sigma_y_inf, inf=inf)
+    return_list <- list(df = df, df_inf = df_inf, par_inf = par_inf)
 	
 	write.table(df, paste(dname_df,".txt"), sep='\t', row.names=FALSE, quote = FALSE)
     write.table(df_inf, paste(dname_df,"_inf.txt"), sep='\t', row.names=FALSE, quote = FALSE)
-	#write.table(par_inf, paste(dname_df,"_par.txt"), sep='\t', row.names=FALSE, quote = FALSE)
+	write.table(par_inf, paste(dname_df,"_par.txt"), sep='\t', row.names=FALSE, quote = FALSE)
       
     return(return_list)
     
@@ -202,5 +208,4 @@ backup<-function(dname){
 
 	return_list <- list(df = df, df_inf = df_inf)
 	return(return_list)
-
 }
