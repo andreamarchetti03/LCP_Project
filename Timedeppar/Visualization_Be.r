@@ -2,6 +2,7 @@
 
 # Plot functions
 
+
 #Plot original data
 
 plot_obs <- function(data){
@@ -196,6 +197,7 @@ plot_chain_acf <- function(data_inf){
 
 
 
+
 plot_chain_all <- function(data_inf){
 
 	options(repr.plot.width = 15, repr.plot.height = 5)
@@ -218,16 +220,11 @@ plot_chain_all <- function(data_inf){
 				
 		# autocorrelation
 		acf(data_inf[[name_inf[i]]], lag = length(data_inf[[name_inf[i]]]) - 1,
-<<<<<<< HEAD
 			main = 'Autocorrelation', xlab = 'lag', ylab = name_inf[[i]], col = col_blue, cex.lab = 1.3)
 			
 		grid(nx = NULL, ny = NULL,
             lty = 2, col = col_grey, lwd = 1) 
 	}	
-=======
-			main = 'Autocorrelation', xlab = 'lag', ylab = name_inf[[i]], col = col_blue)
-	}
->>>>>>> 0ab1a3f9cd8d71e4e2df0099fe60880dff5b7dad
 }
 
 
@@ -273,4 +270,3 @@ plot_freq<-function(data_inf){
        
 	}
 }
-
