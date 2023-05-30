@@ -46,8 +46,8 @@ logprior_ou <- function(param_ou) {
 
     # calculate log priors for the given parameters
     log_prior_mean <- dnorm(param_ou[['xi_mean']], mean = 1, sd = 0.1, log = T)
-    log_prior_sd <- dgamma(param_ou[['xi_sd']], shape = 0.01, rate = 1, log = T)
-    log_prior_gamma <- dinvgamma(param_ou[['xi_gamma']], shape = 2, rate = 0.1, log = T)
+    log_prior_sd <- dgamma(param_ou[['xi_sd']], shape = 1, rate = 100, log = T)
+    log_prior_gamma <- dunif(param_ou[['xi_gamma']], min = 0, max = 20, log = T)
 
     # return result
     return(log_prior_mean + log_prior_sd + log_prior_gamma)
@@ -88,7 +88,7 @@ inference <- function(name, dname_df){
     # choose model parameters:
     xi_mean <- 1
     xi_sd <- 0.01
-    xi_gamma <- 10
+    xi_gamma <- 1
     
     
     #Perform Timedapper inference
@@ -202,7 +202,6 @@ backup<-function(dname){
     df = df[1:n,]
 	
 	df_inf <- read.csv(file_inf, header = T, sep = '\t')
-    df_inf = df_inf[1:n,]
 
 	plot_inf(df)
 

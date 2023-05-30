@@ -31,7 +31,7 @@ plot_inf <- function(data){
     par(mar = c(5.1, 6.1, 4.1, 2.1))
     plot(data$t, data$y_obs, main = "Observed and Inferred times", 
          xlab = "t", ylab = expression(Be[meas]), 
-         xlim = c(200, 9300), ylim = c(-0.8, 1.85),
+         xlim = c(200, 1000), ylim = c(-0.8, 1.85),
          type = 'n', lty = 1, lwd = 2, col = col_blue,
          cex.main = 2, cex.lab = 1.3, cex.axis = 1.5)
 	grid(nx = NULL, ny = NULL,
@@ -41,11 +41,13 @@ plot_inf <- function(data){
     lines(data$t_inf, data$y_obs,   
          type = 'l', lty = 1, lwd = 2, col = col_red,
          cex.main = 2, cex.lab = 1.3, cex.axis = 1.5)
-
+	lines(df_hulk$t_inf, df_hulk$y_d,   
+         type = 'l', lty = 1, lwd = 2, col = "black",
+         cex.main = 2, cex.lab = 1.3, cex.axis = 1.5)
 		 
 	plot((data$t), data$y_obs, main = "Denoised data", 
          xlab = "t", ylab = expression(y[obs]), 
-         xlim = c(200, 9300), ylim = c(-0.8, 1.85),
+         xlim = c(1000, 2000), ylim = c(-0.8, 1.85),
          type = 'n', lty = 1, lwd = 2, col = col_blue,
          cex.main = 2, cex.lab = 1.3, cex.axis = 1.5)		 
 	grid(nx = NULL, ny = NULL,
@@ -62,7 +64,15 @@ plot_inf <- function(data){
 	lines(data$t_inf, data$y_d,   
          type = 'l', lty = 1, lwd = 4, col = col_red,
          cex.main = 2, cex.lab = 1.3, cex.axis = 1.5)
-
+		 
+	plot(data$t_inf, data$y_obs, main = "Denoised data", 
+         xlab = "t", ylab = expression(y[obs]), 
+         xlim = c(200, 9500), ylim = c(-0.8, 1.85),
+         type = 'l', lty = 1, lwd = 2, col = col_blue,
+         cex.main = 2, cex.lab = 1.3, cex.axis = 1.5)
+	lines(data$t_inf, data$y_d,   
+         type = 'l', lty = 1, lwd = 4, col = col_red,
+         cex.main = 2, cex.lab = 1.3, cex.axis = 1.5)
       
     return()
 }
