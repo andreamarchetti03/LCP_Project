@@ -31,9 +31,7 @@ loglikeli <- function(param, data) {
 
     # corrupted model
     y_corr <- rep(0, length(t_corr))
-	
-			
-	#	New version
+				
 	for (j in 1:(n_fix-1)){
 		y_corr <- y_corr + param[[paste0('A.',j)]]*cos(2*pi*freq_i[j]*t_corr + param[[paste0('ph.',j)]])
 	}	
@@ -42,35 +40,41 @@ loglikeli <- function(param, data) {
 		y_corr <- y_corr + param[[paste0('A.',j)]]*cos(2*pi*param[[paste0('freq.',j)]]*t_corr + param[[paste0('ph.',j)]])
 		
 	}
-
     # calculate likelihood
     log_likelihood_y <- sum(dnorm(data[['y_obs']], mean = y_corr, sd = sigma_y, log = T))
 
     # return result
-    return(log_likelihood_y)
-    
+    return(log_likelihood_y)   
 }
 
 # define priors for Orstein-Uhlenbeck parameters
 logprior_ou <- function(param_ou) {
 
     # calculate log priors for the given parameters
+<<<<<<< HEAD
+    log_prior_mean <- dnorm(param_ou[['xi_mean']], mean =10, sd = 1, log = T)
+    log_prior_sd <- dgamma(param_ou[['xi_sd']], shape = 1, rate = 1 log = T)
+    log_prior_gamma <- dinvgamma(param_ou[['xi_gamma']], shape =1.25, rate = 0.125, log = T)
+=======
     log_prior_mean <- dnorm(param_ou[['xi_mean']], mean =5, sd = 0.05, log = T)
 
      log_prior_sd <- dgamma(param_ou[['xi_sd']], shape = 0.1, rate = 0.01, log = T)
     
     log_prior_gamma <- dinvgamma(param_ou[['xi_gamma']], shape = 1.25, rate = 0.0125, log = T)
+>>>>>>> 0ab1a3f9cd8d71e4e2df0099fe60880dff5b7dad
     
-    # return result
     return(log_prior_mean + log_prior_sd + log_prior_gamma)
-
 }
 
 # define priors for constant parameters
 logprior_const <- function(param_const) {
 	
     # calculate priors
+<<<<<<< HEAD
+    log_prior_sigma_y <- dgamma(param_const[['sigma_y']], shape = 5, rate = 1, log = T)
+=======
     log_prior_sigma_y <- dunif(param_const[['sigma_y']], min = 0, max = 1, log = T)
+>>>>>>> 0ab1a3f9cd8d71e4e2df0099fe60880dff5b7dad
 	
 	log_prior_A <- 0
 	for (k in 1:n_cycle){
@@ -92,8 +96,7 @@ logprior_const <- function(param_const) {
 
 inference <- function(name, dname_df){
     
-    #Read data
-	
+    #Read data	
     file <- paste(name,'.txt', sep='')
 	file_str <- paste('Data/',file,sep='')
     df <- read.csv(file_str, header = T, sep = '\t')
@@ -102,10 +105,17 @@ inference <- function(name, dname_df){
 	
 	#Shift data around 0 
 	mean_y = mean(df$y_obs)
+<<<<<<< HEAD
+	df$y_obs = df$y_obs - mean_y
+	
+    
+    #Inizialization of xi parameters	
+=======
 	df$y_obs = df$y_obs - mean(df$y_obs)
 	  
     #Inizialization of xi parameters
 	
+>>>>>>> 0ab1a3f9cd8d71e4e2df0099fe60880dff5b7dad
 	xi_init <- NULL
 	xi_init <- append(xi_init, 0)
 	for (i in 2:n_main){
@@ -113,7 +123,7 @@ inference <- function(name, dname_df){
 		xi_init <- append(xi_init, param)
 	}
     df$init <- xi_init
-    xi = df[,c('t','init')]       #It could also be a randOU sequence..
+    xi = df[,c('t','init')]     
     
     
 	
@@ -132,8 +142,7 @@ inference <- function(name, dname_df){
 		names(param) <- paste0('ph.',i)
 		ph <- append(ph, param) 
 	}
-	
-	
+		
 	# f parameters
 	freq <- NULL
 	for (i in n_fix:n_cycle) {
@@ -141,12 +150,10 @@ inference <- function(name, dname_df){
 		names(param) <- paste0('freq.',i)
 		freq <- append(freq, param) 
 	}
-	
-	
+		
 	param_init <- list( 'xi' = xi ,'sigma_y' = 0.5)
 	param_init <- c(param_init, A, ph, freq)
-	
-	
+		
     # ranges of constant parameters
 	param_range <- list('sigma_y' = c(0,1))
 
@@ -166,7 +173,6 @@ inference <- function(name, dname_df){
 		ph_range <- append(ph_range, par_range) 
 	}
 	
-	
 	# freq parameters range
 	freq_range <- NULL
 	for (i in n_fix:n_cycle) {
@@ -175,16 +181,31 @@ inference <- function(name, dname_df){
 		freq_range <- append(freq_range, par_range) 
 	}
 	
+<<<<<<< HEAD
+	# freq parameters range
+	xi_range <- NULL
+	for (i in 1:n_main) {
+		par_range <- list(c(0,20))
+		xi_range <- append(xi_range, par_range) 
+	}
+	
+	param_range <- c(xi_range ,param_range, A_range, ph_range, freq_range)
+=======
 
 	param_range <- c(param_range, A_range, ph_range, freq_range)
+>>>>>>> 0ab1a3f9cd8d71e4e2df0099fe60880dff5b7dad
     
     # choose model parameters:
     xi_mean <- mean(df$init)
     xi_sd <- sd(df$init)
     xi_gamma <- 1/10
+<<<<<<< HEAD
+      
+=======
 
     
     
+>>>>>>> 0ab1a3f9cd8d71e4e2df0099fe60880dff5b7dad
     #Perform Timedapper inference
     inf <- NULL
     inf <- infer.timedeppar(loglikeli = loglikeli, 
@@ -208,28 +229,21 @@ inference <- function(name, dname_df){
     df_inf_ou <- as.data.frame(inf$sample.param.ou[seq(start, end, th),])
     df_inf_const <- as.data.frame(inf$sample.param.const[seq(start, end, th),])
     df_inf_xi <- as.data.frame(inf$sample.param.timedep[[1]][seq(start+1, end+1, th),])
-	
-	
+		
     #Name xi sequence
     names(df_inf_xi) <- paste0(rep('xi.', n_main), as.character(seq(1, n_main)))
     df_inf <- cbind(df_inf_ou, df_inf_const, df_inf_xi)
-    
-    
+      
     #Function to infer mean of parameters from results file
-
     infer_par <- function(names, data) {
 	
 		par_inf <- NULL
-
 		for (name in names) {
 			param <- quantile(data[[name]], probs = 0.5)
 			names(param) <- name
 			par_inf <- append(par_inf, param)
 		}
-
 		return(par_inf)
-
-
     }
     
     #Inferred parameters
@@ -244,7 +258,6 @@ inference <- function(name, dname_df){
 	freq_inf = infer_par(names(freq), df_inf)
 
 	# xi parameters
-	
     xi_inf = infer_par(names(df_inf_xi), df_inf)
     
     #xi mean
@@ -261,6 +274,7 @@ inference <- function(name, dname_df){
 
     par_inf<- c(A_inf,ph_inf,freq_inf,xi_inf, xi_mean_inf,xi_sd_inf,xi_gamma_inf,sigma_y_inf)
 
+	#Inferred times
     t_inf <- rep(1,n_main)
 
     t_inf[1]=df$t[1]
@@ -301,11 +315,19 @@ inference <- function(name, dname_df){
 	
 	plot_inf(df)
 
+<<<<<<< HEAD
+    return_list <- list(df = df, df_inf = df_inf, par_inf=par_inf)
+   
+	write.table(df, paste(dname_df,".txt", sep = ''), sep='\t', row.names=FALSE, quote = FALSE)
+    write.table(df_inf, paste(dname_df,"_inf.txt", sep = ''), sep='\t', row.names=FALSE, quote = FALSE)
+	write.table(par_inf, paste(dname_df,"_par.txt", sep = ''), sep='\t', row.names=FALSE, quote = FALSE)
+=======
   return_list <- list(df = df, df_inf = df_inf, par_inf=par_inf)
 
 	write.table(df, paste(dname_df,".txt"), sep='\t', row.names=FALSE, quote = FALSE)
   write.table(df_inf, paste(dname_df,"_inf.txt"), sep='\t', row.names=FALSE, quote = FALSE)
 	write.table(par_inf, paste(dname_df,"_par.txt"), sep='\t', row.names=FALSE, quote = FALSE)
+>>>>>>> 0ab1a3f9cd8d71e4e2df0099fe60880dff5b7dad
 	
   return(return_list)
     
@@ -315,9 +337,9 @@ inference <- function(name, dname_df){
 backup<-function(dname){
 
 	#Read data
-    file <- paste(dname,'.txt')
-	file_inf <- paste(dname,'_inf.txt')
-	file_par <- paste(dname,'_par.txt')
+    file <- paste(dname,'.txt', sep = '')
+	file_inf <- paste(dname,'_inf.txt', sep = '')
+	file_par <- paste(dname,'_par.txt', sep = '')
 	
 	
     df <- read.csv(file, header = T, sep = '\t')
@@ -326,11 +348,11 @@ backup<-function(dname){
 	df_inf <- read.csv(file_inf, header = T, sep = '\t')
     df_inf = df_inf[1:n_main,]
 	
-	par_inf <- read.csv(file_inf, header = T, sep = '\t')
+	par_inf <- read.csv(file_par, header = T, sep = '\t')
 	
 	#plot_inf(df)
 
-	return_list <- list(df = df, df_inf = df_inf)
+	return_list <- list(df = df, df_inf = df_inf, par_inf = par_inf)
 	return(return_list)
 
 }
