@@ -52,7 +52,7 @@ logprior_ou <- function(param_ou) {
 
     # calculate log priors for the given parameters
     log_prior_mean <- dnorm(param_ou[['xi_mean']], mean =10, sd = 1, log = T)
-    log_prior_sd <- dgamma(param_ou[['xi_sd']], shape = 1, rate = 1 log = T)
+    log_prior_sd <- dgamma(param_ou[['xi_sd']], shape = 5, rate = 1, log = T)
     log_prior_gamma <- dinvgamma(param_ou[['xi_gamma']], shape =1.25, rate = 0.125, log = T)
     
     return(log_prior_mean + log_prior_sd + log_prior_gamma)
@@ -62,7 +62,7 @@ logprior_ou <- function(param_ou) {
 logprior_const <- function(param_const) {
 	
     # calculate priors
-    log_prior_sigma_y <- dgamma(param_const[['sigma_y']], shape = 5, rate = 1, log = T)
+    log_prior_sigma_y <- dgamma(param_const[['sigma_y']], shape = 1, rate = 1, log = T)
 	
 	log_prior_A <- 0
 	for (k in 1:n_cycle){
@@ -247,7 +247,7 @@ inference <- function(name, dname_df){
 	#Inferred times
     t_inf <- rep(1,n_main)
 
-    t_inf[1]=df$t[1]
+    t_inf[1] <- df$t[1]
 
     for (i in 2:n_main) {
         t_inf[i]=t_inf[i-1]+xi_inf[i]
@@ -309,7 +309,6 @@ backup<-function(dname){
     df = df[1:n_main,]
 	
 	df_inf <- read.csv(file_inf, header = T, sep = '\t')
-    df_inf = df_inf[1:n_main,]
 	
 	par_inf <- read.csv(file_par, header = T, sep = '\t')
 	
