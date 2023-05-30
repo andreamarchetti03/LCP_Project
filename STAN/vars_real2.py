@@ -17,12 +17,6 @@ err_phases = data_load[:,5]
 dt = 4.873
 
 # sample from the model
-n_chains = 4
-n_warmup = 2000
+n_chains = 8 #4
+n_warmup = 3000 #2000
 n_sample = 4000
-
-#### con 40+80 iterazioni 1 catena funziona in circa 10 min ####
-#### anche con 240 interazioni ####
-
-N_fix = 6
-N_inf = 14
