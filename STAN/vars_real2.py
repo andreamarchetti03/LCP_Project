@@ -2,7 +2,7 @@ import numpy as np
 
 #crea arrays con periodi, ampiezze e fasi
 #leggendoli da Insu_cycles_final.txt
-file_name = "LCP_Project/Data/insu_cycles_final.txt"
+file_name = "LCP_Project/Data/Be_cycles.txt"
 
 data_load = np.loadtxt(file_name)
 
@@ -13,7 +13,8 @@ err_amplitudes = data_load[:,3]
 phases = data_load[:,4]
 err_phases = data_load[:,5]
 
-dt = 10
+# average dt from Be series
+dt = 4.873
 
 # sample from the model
 n_chains = 4
@@ -22,3 +23,6 @@ n_sample = 4000
 
 #### con 40+80 iterazioni 1 catena funziona in circa 10 min ####
 #### anche con 240 interazioni ####
+
+N_fix = 6
+N_inf = 14

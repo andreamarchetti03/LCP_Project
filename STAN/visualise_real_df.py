@@ -21,10 +21,14 @@ def init(data, df_inference):
 	year  = data_load[:len(t_mean),0]
 	cycle = data_load[:len(t_mean),1]
 
+	# move the observed signal to have 0 mean
+	# as done to infer
+	cycle = cycle - np.mean(cycle)
+
 	frequencies_fix = vars_real2.frequencies[0:6]  
 
 	#return also vector with fixed and inferred frequencies altogether
-	frequencies = np.append(frequencies_fix, np.mean(df_inference["freq_inf"], axis=1))
+	frequencies = np.append(frequencies_fix, df_inference.loc[:, df_inference.columns.str.startswith('freq_inf.')].mean().to_numpy())
 
 	return df_inference, year, t_mean, cycle, frequencies
 
@@ -62,9 +66,6 @@ def visualise(data, inference, from_, to_, sparam):
 def signal(data, inference, from_, to_):
 	
 	fit, year, t_mean, cycle, freq = init(data, inference)
-	
-	A=np.mean(fit["A"], axis=1)
-	phi=np.mean(fit["phi"], axis=1)
 
 	# calculate the array of inferred A and phi
 	A = inference.loc[:, inference.columns.str.startswith('A.')].mean()
@@ -139,8 +140,7 @@ def PSD(data, inference):
 	
 	# denoised signal
 	y = 0
-	#adattare
-	#for i in range(0,Nwaves): y = y + A[i] * np.cos(2*np.pi * freq[i] * t_mean + phi[i])
+	for i in range(0,Nwaves): y = y + A[i] * np.cos(2*np.pi * freq[i] * t_mean + phi[i])
 	
 	sampling_freq = 1 / np.mean(np.diff(year))
 	freqs_, pow_ = welch(cycle, fs=sampling_freq)#, nperseg=1024)
@@ -168,13 +168,13 @@ def marginal(data, inference):
 
 	fit, year, t_mean, cycle, freq = init(data, inference)
 
-	freq_inf = fit["freq_inf.0"]
+	freq_inf = fit["freq_inf.1"]
 	mean = fit["mean"]
 	sd   = fit["sd"]
 	tau  = fit["tau"]
-	A    = fit["A.0"]
-	phi  = fit["phi.0"]
-	sigma_y = fit["sigma_y"][0]
+	A    = fit["A.1"]
+	phi  = fit["phi.1"]
+	sigma_y = fit["sigma_y"]
 		
 	fig, ax = plt.subplots(3, 3, figsize=(15, 8))
 	
@@ -186,7 +186,7 @@ def marginal(data, inference):
 	ax[1][1].hist(phi); ax[1][1].set_title("phi")
 	ax[1][2].hist(sigma_y); ax[1][2].set_title("sigma_y")
 
-	ax[2][0].hist(freq); ax[2][0].set_title("freq_inf")
+	ax[2][0].hist(freq_inf); ax[2][0].set_title("freq_inf")
 
 
 
