@@ -52,7 +52,9 @@ logprior_ou <- function(param_ou) {
 
     # calculate log priors for the given parameters
     log_prior_mean <- dnorm(param_ou[['xi_mean']], mean =10, sd = 1, log = T)
+
     log_prior_sd <- dgamma(param_ou[['xi_sd']], shape = 1, rate = 1, log = T)
+
     log_prior_gamma <- dinvgamma(param_ou[['xi_gamma']], shape =1.25, rate = 0.125, log = T)
     
     return(log_prior_mean + log_prior_sd + log_prior_gamma)
@@ -62,7 +64,7 @@ logprior_ou <- function(param_ou) {
 logprior_const <- function(param_const) {
 	
     # calculate priors
-    log_prior_sigma_y <- dgamma(param_const[['sigma_y']], shape = 5, rate = 1, log = T)
+    log_prior_sigma_y <- dgamma(param_const[['sigma_y']], shape = 1, rate = 1, log = T)
 	
 	log_prior_A <- 0
 	for (k in 1:n_cycle){
@@ -103,6 +105,7 @@ inference <- function(name, dname_df){
 		param <- df$t[i]-df$t[i-1]
 		xi_init <- append(xi_init, param)
 	}
+
     df$init <- xi_init
     xi = df[,c('t','init')]     
     
@@ -134,9 +137,8 @@ inference <- function(name, dname_df){
 		
 	param_init <- list( 'xi' = xi ,'sigma_y' = 0.5)
 	param_init <- c(param_init, A, ph, freq)
-		
-    # ranges of constant parameters
-	param_range <- list('sigma_y' = c(0,2))
+	
+	#RANGES
 
 	# A parameters range
 	A_range <- NULL
@@ -162,14 +164,9 @@ inference <- function(name, dname_df){
 		freq_range <- append(freq_range, par_range) 
 	}
 	
-	# freq parameters range
-	xi_range <- NULL
-	for (i in 1:n_main) {
-		par_range <- list(c(0,20))
-		xi_range <- append(xi_range, par_range) 
-	}
+	param_range <- list('sigma_y' = c(0,2), 'xi' = c(0,30))
 	
-	param_range <- c(xi_range ,param_range, A_range, ph_range, freq_range)
+	param_range <- c(param_range, A_range, ph_range, freq_range)
     
     # choose model parameters:
     xi_mean <- mean(df$init)
@@ -247,7 +244,7 @@ inference <- function(name, dname_df){
 	#Inferred times
     t_inf <- rep(1,n_main)
 
-    t_inf[1]=df$t[1]
+    t_inf[1] <- df$t[1]
 
     for (i in 2:n_main) {
         t_inf[i]=t_inf[i-1]+xi_inf[i]
@@ -309,7 +306,6 @@ backup<-function(dname){
     df = df[1:n_main,]
 	
 	df_inf <- read.csv(file_inf, header = T, sep = '\t')
-    df_inf = df_inf[1:n_main,]
 	
 	par_inf <- read.csv(file_par, header = T, sep = '\t')
 	
