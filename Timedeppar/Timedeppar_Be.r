@@ -166,6 +166,7 @@ inference <- function(name, dname_df){
 	xi_range <- NULL
 	for (i in 1:n_main) {
 		par_range <- list(c(0,20))
+		names(par_range) <- paste0('xi.',i)
 		xi_range <- append(xi_range, par_range) 
 	}
 	
