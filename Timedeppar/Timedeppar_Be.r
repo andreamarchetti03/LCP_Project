@@ -103,6 +103,7 @@ inference <- function(name, dname_df){
 		param <- df$t[i]-df$t[i-1]
 		xi_init <- append(xi_init, param)
 	}
+
     df$init <- xi_init
     xi = df[,c('t','init')]     
     
@@ -134,9 +135,8 @@ inference <- function(name, dname_df){
 		
 	param_init <- list( 'xi' = xi ,'sigma_y' = 0.5)
 	param_init <- c(param_init, A, ph, freq)
-		
-    # ranges of constant parameters
-	param_range <- list('sigma_y' = c(0,2))
+	
+	#RANGES
 
 	# A parameters range
 	A_range <- NULL
@@ -162,15 +162,9 @@ inference <- function(name, dname_df){
 		freq_range <- append(freq_range, par_range) 
 	}
 	
-	# freq parameters range
-	xi_range <- NULL
-	for (i in 1:n_main) {
-		par_range <- list(c(0,20))
-		names(par_range) <- paste0('xi.',i)
-		xi_range <- append(xi_range, par_range) 
-	}
+	param_range <- list('sigma_y' = c(0,2), 'xi' = c(0,30))
 	
-	param_range <- c(xi_range ,param_range, A_range, ph_range, freq_range)
+	param_range <- c(param_range, A_range, ph_range, freq_range)
     
     # choose model parameters:
     xi_mean <- mean(df$init)
