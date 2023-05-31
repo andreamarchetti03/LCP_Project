@@ -52,7 +52,9 @@ logprior_ou <- function(param_ou) {
 
     # calculate log priors for the given parameters
     log_prior_mean <- dnorm(param_ou[['xi_mean']], mean =10, sd = 1, log = T)
-    log_prior_sd <- dgamma(param_ou[['xi_sd']], shape = 5, rate = 1, log = T)
+
+    log_prior_sd <- dgamma(param_ou[['xi_sd']], shape = 1, rate = 1, log = T)
+
     log_prior_gamma <- dinvgamma(param_ou[['xi_gamma']], shape =1.25, rate = 0.125, log = T)
     
     return(log_prior_mean + log_prior_sd + log_prior_gamma)

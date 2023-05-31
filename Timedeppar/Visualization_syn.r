@@ -118,20 +118,39 @@ plot_hist<-function(par_inf){
     par(mfrow=c(3,3))
     name_par_inf=c("xi mean","xi_gamma", "xi_sd", "A", "ph", "sigma_y")
 	
+    x <- seq(0.5, 1.5, by = 0.001)
+    y <- dnorm(x, mean = 1, sd = 0.1)
 	hist(par_inf$xi_mean,xlab=name_par_inf[[1]],ylab="counts",main=paste0("Histogram of ", name_par_inf[[1]]),
          col=col_blue,cex.main = 2, cex.lab = 1.7, cex.axis = 1.5)
+    lines(x,y,lwd=3,col=col_green)
     
+    
+    
+     x <- seq(-0.1,0.3, by = 0.001)
+     y <- dnorm(x, mean = 0.1, sd = 0.05)
     hist(par_inf$xi_gamma,xlab=name_par_inf[[2]],ylab="counts",main=paste0("Histogram of ", name_par_inf[[2]]),
          col=col_blue,cex.main = 2, cex.lab = 1.7, cex.axis = 1.5)
+    lines(x,y,lwd=3,col=col_green)
     
+    x <- seq(0,0.05, by = 0.001)
+    y <- dunif(x, min =0, max = 1)
     hist(par_inf$xi_sd,xlab=name_par_inf[[3]],ylab="counts",main=paste0("Histogram of ", name_par_inf[[3]]),
          col=col_blue,cex.main = 2, cex.lab = 1.7, cex.axis = 1.5)
+    lines(x,y,lwd=3,col=col_green)
     
+    
+    x <- seq(7,13, by = 0.001)
+    y <- dnorm(x, 10, 1)
     hist(par_inf$A,xlab=name_par_inf[[4]],ylab="counts",main=paste0("Histogram of ", name_par_inf[[4]]),
          col=col_blue,cex.main = 2, cex.lab = 1.7, cex.axis = 1.5)
+    lines(x,y,lwd=3,col=col_green)
     
+    x <- seq(1.5,2.5, by = 0.001)
+    y <- dnorm(x, 2, 0.1)
     hist(par_inf$ph,xlab=name_par_inf[[5]],ylab="counts",main=paste0("Histogram of ", name_par_inf[[5]]),
          col=col_blue,cex.main = 2, cex.lab = 1.7, cex.axis = 1.5)
+    lines(x,y,lwd=3,col=col_green)
+    
     
     hist(par_inf$sigma_y,xlab=name_par_inf[[6]],ylab="counts",main=paste0("Histogram of ", name_par_inf[[6]]),
          col=col_blue,cex.main = 2, cex.lab = 1.7, cex.axis = 1.5)
