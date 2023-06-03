@@ -95,7 +95,7 @@ plot_diff <- function(data){
     return()
 }
 
-plot_chain<-function(par_inf){
+plot_chain<-function(inf){
 
 	l <-length(par_inf)
 	x_chain<-seq(1,l,1)
@@ -112,48 +112,73 @@ plot_chain<-function(par_inf){
 	lines(x_chain,par_inf, type = "l", lty = 1, lwd = 4, col = col_blue)
 }
 
-plot_hist<-function(par_inf){
+plot_hist<-function(inf){
+	n_c = 5000
     options(repr.plot.width = 15, repr.plot.height = 10)
     par(mar = c(5.1, 6.1, 4.1, 2.1))
     par(mfrow=c(3,3))
-    name_par_inf=c("xi mean","xi_gamma", "xi_sd", "A", "ph", "sigma_y")
+    name_par_inf=c("xi mean","xi_sd", "xi_gamma", "A", "ph", "sigma_y", "xi.10", "xi.250", "xi.500")
 	
     x <- seq(0.5, 1.5, by = 0.001)
     y <- dnorm(x, mean = 1, sd = 0.1)
-	hist(par_inf$xi_mean,xlab=name_par_inf[[1]],ylab="counts",main=paste0("Histogram of ", name_par_inf[[1]]),
-         col=col_blue,cex.main = 2, cex.lab = 1.7, cex.axis = 1.5)
+	hist(inf$df_inf$xi_mean,xlab=name_par_inf[[1]],ylab="counts",main=paste0("Histogram of ", name_par_inf[[1]]),
+         col=col_blue,cex.main = 2, cex.lab = 1.5, cex.axis = 1.5, freq = FALSE,breaks = 20)
     lines(x,y,lwd=3,col=col_green)
-    
-    
-    
-     x <- seq(-0.1,0.3, by = 0.001)
-     y <- dnorm(x, mean = 0.1, sd = 0.05)
-    hist(par_inf$xi_gamma,xlab=name_par_inf[[2]],ylab="counts",main=paste0("Histogram of ", name_par_inf[[2]]),
-         col=col_blue,cex.main = 2, cex.lab = 1.7, cex.axis = 1.5)
+
+     
+     x <- seq(0,0.3, by = 0.001)
+     y <- dgamma(x, shape=1, rate = 100)
+    hist(inf$df_inf$xi_sd,xlab=name_par_inf[[2]],ylab="counts",main=paste0("Histogram of ", name_par_inf[[2]]),
+         col=col_blue,cex.main = 2, cex.lab = 1.5, cex.axis = 1.5, freq = FALSE,breaks = 20)
     lines(x,y,lwd=3,col=col_green)
+
     
-    x <- seq(0,0.05, by = 0.001)
-    y <- dunif(x, min =0, max = 1)
-    hist(par_inf$xi_sd,xlab=name_par_inf[[3]],ylab="counts",main=paste0("Histogram of ", name_par_inf[[3]]),
-         col=col_blue,cex.main = 2, cex.lab = 1.7, cex.axis = 1.5)
+    x <- seq(0,20, by = 0.01)
+    y <- dunif(x, min =0, max = 20)
+    hist(inf$df_inf$xi_gamma,xlab=name_par_inf[[3]],ylab="counts",main=paste0("Histogram of ", name_par_inf[[3]]),
+         col=col_blue,cex.main = 2, cex.lab = 1.5, cex.axis = 1.5, freq = FALSE,breaks = 20)
     lines(x,y,lwd=3,col=col_green)
-    
-    
+
+        
     x <- seq(7,13, by = 0.001)
     y <- dnorm(x, 10, 1)
-    hist(par_inf$A,xlab=name_par_inf[[4]],ylab="counts",main=paste0("Histogram of ", name_par_inf[[4]]),
-         col=col_blue,cex.main = 2, cex.lab = 1.7, cex.axis = 1.5)
+    hist(inf$df_inf$A,xlab=name_par_inf[[4]],ylab="counts",main=paste0("Histogram of ", name_par_inf[[4]]),
+         col=col_blue,cex.main = 2, cex.lab = 1.5, cex.axis = 1.5, freq = FALSE,breaks = 20)
     lines(x,y,lwd=3,col=col_green)
+
     
-    x <- seq(1.5,2.5, by = 0.001)
+    x <- seq(0,2.5, by = 0.001)
     y <- dnorm(x, 2, 0.1)
-    hist(par_inf$ph,xlab=name_par_inf[[5]],ylab="counts",main=paste0("Histogram of ", name_par_inf[[5]]),
-         col=col_blue,cex.main = 2, cex.lab = 1.7, cex.axis = 1.5)
+    hist(inf$df_inf$ph,xlab=name_par_inf[[5]],ylab="counts",main=paste0("Histogram of ", name_par_inf[[5]]),
+         col=col_blue,cex.main = 2, cex.lab = 1.5, cex.axis = 1.5, freq = FALSE,breaks = 20)
     lines(x,y,lwd=3,col=col_green)
+
     
-    
-    hist(par_inf$sigma_y,xlab=name_par_inf[[6]],ylab="counts",main=paste0("Histogram of ", name_par_inf[[6]]),
-         col=col_blue,cex.main = 2, cex.lab = 1.7, cex.axis = 1.5)
+    x <- seq(0,2.5, by = 0.001)
+    y <- dgamma(x, shape=1, rate=1)
+    hist(inf$df_inf$sigma_y,xlab=name_par_inf[[6]],ylab="counts",main=paste0("Histogram of ", name_par_inf[[6]]),
+         col=col_blue,cex.main = 2, cex.lab = 1.5, cex.axis = 1.5, freq = FALSE,breaks = 20)
+	lines(x,y,lwd=3,col=col_green)
+
+	
+	#xi histograms
+    hist(inf$df_inf$xi.10,xlab=name_par_inf[[7]],ylab="counts",main=paste0("Histogram of ", name_par_inf[[7]]),
+         col=col_blue,cex.main = 2, cex.lab = 1.5, cex.axis = 1.5, freq = FALSE,breaks = 20)
+	abline(v = median(inf$df_inf[[name_par_inf[7]]]), col = col_green, lty = 2, lwd = 2)
+	abline(v = inf$df$init[10], col = col_red, lty = 2, lwd = 2)
+
+
+    hist(inf$df_inf$xi.250,xlab=name_par_inf[[8]],ylab="counts",main=paste0("Histogram of ", name_par_inf[[8]]),
+         col=col_blue,cex.main = 2, cex.lab = 1.5, cex.axis = 1.5, freq = FALSE,breaks = 20)
+	abline(v = median(inf$df_inf[[name_par_inf[8]]]), col = col_green, lty = 2, lwd = 2)
+	abline(v = inf$df$init[250], col = col_red, lty = 2, lwd = 2)
+
+
+    hist(inf$df_inf$xi.500,xlab=name_par_inf[[9]],ylab="counts",main=paste0("Histogram of ", name_par_inf[[9]]),
+         col=col_blue,cex.main = 2, cex.lab = 1.5, cex.axis = 1.5, freq = FALSE,breaks = 20)
+	abline(v = median(inf$df_inf[[name_par_inf[9]]]), col = col_green, lty = 2, lwd = 2)
+	abline(v = inf$df$init[500], col = col_red, lty = 2, lwd = 2)
+
 }
 
 
@@ -161,7 +186,7 @@ plot_chain_acf <- function(data_inf){
 
 	options(repr.plot.width = 11, repr.plot.height = 5)
     par(mar = c(5.1, 6.1, 4.1, 2.1))
-    name_inf = c("xi_mean","xi_gamma", "xi_sd", "sigma_y", "A", "ph", "xi.250")
+    name_inf = c("xi_mean","xi_gamma", "xi_sd", "sigma_y", "A", "ph", "xi.10", "xi.250", "xi.500")
 
 	l <-length(data_inf$xi_mean)
 	x_chain <- seq(1,l,1) 

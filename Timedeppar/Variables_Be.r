@@ -32,14 +32,9 @@ freq_hulk <- hulk_cycle$freq
 
 
 
-n_iter <- 4000
+n_iter <- 400000
 n_interval <- 20
-<<<<<<< Updated upstream
 n_adapt <- 200000
 n_adapt_cov <- 500
-=======
-n_adapt <- 120
-n_adapt_cov <- 50
->>>>>>> Stashed changes
 
 
