@@ -27,52 +27,68 @@ plot_obs <- function(data){
 # Plot inferred data on top of original observed data
 plot_inf <- function(data){
     
-    options(repr.plot.width = 15, repr.plot.height = 10)
+    options(repr.plot.width = 10, repr.plot.height = 6.5)
     par(mar = c(5.1, 6.1, 4.1, 2.1))
     plot(data$t, data$y_obs, main = "Observed and Inferred times", 
          xlab = "t", ylab = expression(Be[meas]), 
-         xlim = c(200, 1000), ylim = c(-0.8, 1.85),
+         xlim = c(500, 1500), ylim = c(-0.8, 1.85),
          type = 'n', lty = 1, lwd = 2, col = col_blue,
-         cex.main = 2, cex.lab = 1.3, cex.axis = 1.5)
+         cex.main = 2, cex.lab = 1.3, cex.axis = 1.3)
 	grid(nx = NULL, ny = NULL,
             lty = 2, col = col_grey, lwd = 1)		
 	lines(data$t, data$y_obs, type = "l", lty = 1, lwd = 4, col = col_blue)
 
     lines(data$t_inf, data$y_obs,   
          type = 'l', lty = 1, lwd = 2, col = col_red,
-         cex.main = 2, cex.lab = 1.3, cex.axis = 1.5)
-	lines(df_hulk$t_inf, df_hulk$y_d,   
-         type = 'l', lty = 1, lwd = 2, col = "black",
-         cex.main = 2, cex.lab = 1.3, cex.axis = 1.5)
+         cex.main = 2, cex.lab = 1.3, cex.axis = 1.3)
+	#lines(df_hulk$t_inf, df_hulk$y_d,   
+    #     type = 'l', lty = 1, lwd = 2, col = "black",
+    #     cex.main = 2, cex.lab = 1.3, cex.axis = 1.3)
+		 
+	legend(x = 'topright',
+			col = c(col_blue, "red"),
+			lty = c(1,1,1),
+			lwd = c(2,2,2),
+			cex=1.3,
+			bty="n",
+			legend = c('Original data', 'Denoised data'))
 		 
 	plot((data$t), data$y_obs, main = "Denoised data", 
-         xlab = "t", ylab = expression(y[obs]), 
-         xlim = c(1000, 2000), ylim = c(-0.8, 1.85),
+         xlab = "t", ylab = expression(Be[meas]), 
+         xlim = c(500, 1500), ylim = c(-0.8, 1.85),
          type = 'n', lty = 1, lwd = 2, col = col_blue,
-         cex.main = 2, cex.lab = 1.3, cex.axis = 1.5)		 
+         cex.main = 2, cex.lab = 1.3, cex.axis = 1.3)		 
 	grid(nx = NULL, ny = NULL,
             lty = 2, col = col_grey, lwd = 2)
 	lines(data$t, data$y_obs, type = "l", lty = 1, lwd = 4, col = col_blue)
-    lines(df_hulk$t_inf, df_hulk$y_d,   
-         type = 'l', lty = 1, lwd = 2, col = "black",
-         cex.main = 2, cex.lab = 1.3, cex.axis = 1.5)
+    #lines(df_hulk$t_inf, df_hulk$y_d,   
+    #     type = 'l', lty = 1, lwd = 2, col = "black",
+    #     cex.main = 2, cex.lab = 1.3, cex.axis = 1.3)
 		 
 	lines(((data$t)), data$y_or,   
          type = 'l', lty = 1, lwd = 3, col = col_green,
-         cex.main = 2, cex.lab = 1.3, cex.axis = 1.5)
+         cex.main = 2, cex.lab = 1.3, cex.axis = 1.3)
 		 
 	lines(data$t_inf, data$y_d,   
          type = 'l', lty = 1, lwd = 4, col = col_red,
-         cex.main = 2, cex.lab = 1.3, cex.axis = 1.5)
+         cex.main = 2, cex.lab = 1.3, cex.axis = 1.3)
+		 
+	legend(x = 'topright',
+			col = c(col_blue, col_green, "red"),
+			lty = c(1,1,1,1),
+			lwd = c(2,2,2,2),
+			cex=1.3,
+			bty="n",
+			legend = c('Original data', "Main frequencies", 'Denoised data'))
 		 
 	plot(data$t_inf, data$y_obs, main = "Denoised data", 
          xlab = "t", ylab = expression(y[obs]), 
          xlim = c(200, 9500), ylim = c(-0.8, 1.85),
          type = 'l', lty = 1, lwd = 2, col = col_blue,
-         cex.main = 2, cex.lab = 1.3, cex.axis = 1.5)
+         cex.main = 2, cex.lab = 1.3, cex.axis = 1.3)
 	lines(data$t_inf, data$y_d,   
          type = 'l', lty = 1, lwd = 4, col = col_red,
-         cex.main = 2, cex.lab = 1.3, cex.axis = 1.5)
+         cex.main = 2, cex.lab = 1.3, cex.axis = 1.3)
       
     return()
 }
@@ -81,11 +97,11 @@ plot_inf <- function(data){
 #Plot time difference and xi_inf
 plot_diff <- function(data){
     
-   options(repr.plot.width = 15, repr.plot.height = 10)
+   options(repr.plot.width = 10, repr.plot.height = 6.5)
    par(mar = c(5.1, 6.1, 4.1, 2.1))
 
     plot(data$t, data$t_diff, main = "Time difference", 
-         xlab = "t", ylab = "Diff", 
+         xlab = "Time [y]", ylab = "Diff", 
          xlim = c(0, 9500),
          type = 'n', lty = 1, lwd = 2, col = col_blue,
          cex.main = 2, cex.lab = 1.3, cex.axis = 1.5)
@@ -93,16 +109,16 @@ plot_diff <- function(data){
          lty = 2, col = col_grey, lwd = 1)
 	lines(data$t, data$t_diff, type = "l", lty = 1, lwd = 4, col = col_blue)
 
-    options(repr.plot.width = 15, repr.plot.height = 5)
     par(mar = c(5.1, 6.1, 4.1, 2.1))
-    plot(data$t, data$xi_inf, main = expression(bold(symbol(x)[i] ~inferred)), 
-         xlab = "t", ylab = expression(symbol(x)[i]), 
-         xlim = c(0, 9500),type = "n" ,
+	l=seq(1,n_main,1)
+    plot(l, data$xi_inf, main = expression(bold(symbol(x)[i] ~inferred)), 
+         xlab = "Index", ylab = expression(symbol(x)[i]), 
+         xlim = c(0, 1900),type = "n" ,
           lty = 1, lwd = 4, col = col_blue,
          cex.main = 2, cex.lab = 1.3, cex.axis = 1.5)
 	grid(nx = NULL, ny = NULL,
          lty = 2, col = col_grey, lwd = 1)
-	lines(data$t, data$xi_inf, type = "l", lty = 1, lwd = 4, col = col_blue)
+	lines(l, data$xi_inf, type = "l", lty = 1, lwd = 4, col = col_blue)
     
     return()
 }
@@ -148,29 +164,63 @@ plot_multi_chain<-function(par_inf){
 }
 
 
-plot_hist<-function(par_inf){
+plot_hist<-function(inf){
     options(repr.plot.width = 15, repr.plot.height = 10)
     par(mar = c(5.1, 6.1, 4.1, 2.1))
     par(mfrow=c(3,3))
-    name_par_inf=c("xi mean","xi_gamma", "xi_sd", "A.1", "ph.1", "freq.8")
+    name_par_inf=c("xi mean","xi_sd", "xi_gamma", "A.6", "ph.6", "freq.6", "xi.10", "xi.900", "xi.1800")
+	
+	x <- seq(2, 8, by = 0.01)
+    y <- dnorm(x, mean =5, sd = 1)
+    hist(inf$df_inf$xi_mean,xlab=name_par_inf[[1]],ylab="frequency",main=paste0("Histogram of ", name_par_inf[[1]]),
+         col=col_blue,cex.main = 2, cex.lab = 1.5, cex.axis = 1.5, freq = FALSE)
+	lines(x,y,lwd=3,col=col_green)
+    
+	x <- seq(0, 8, by = 0.01)
+    y <- dgamma(x, shape = 2.5, rate = 1)
+    hist(inf$df_inf$xi_sd,xlab=name_par_inf[[2]],ylab="frequency",main=paste0("Histogram of ", name_par_inf[[2]]),
+         col=col_blue,cex.main = 2, cex.lab = 1.5, cex.axis = 1.5, freq = FALSE)
+    lines(x,y,lwd=3,col=col_green)
+	
+	x <- seq(0, 0.05, by = 0.001)
+    y <- dgamma(x, shape =2, rate = 100)
+    hist(inf$df_inf$xi_gamma,xlab=name_par_inf[[3]],ylab="frequency",main=paste0("Histogram of ", name_par_inf[[3]]),
+         col=col_blue,cex.main = 2, cex.lab = 1.5, cex.axis = 1.5, freq = FALSE)
+	lines(x,y,lwd=3,col=col_green)
+    
+	x <- seq(0.1, 0.3, by = 0.001)
+    y <- dnorm(x, mean = df_cycle[['A']][6], sd = 0.3*df_cycle[['A']][7])
+    hist(inf$df_inf$A.6,xlab=name_par_inf[[4]],ylab="frequency",main=paste0("Histogram of ", name_par_inf[[4]]),
+         col=col_blue,cex.main = 2, cex.lab = 1.5, cex.axis = 1.5, freq = FALSE)
+	lines(x,y,lwd=3,col=col_green)
+    
+	x <- seq(0.8, 2.2, by = 0.01)
+    y <- dnorm(x, mean = df_cycle[['ph']][6], sd = 0.2*df_cycle[['ph']][7])
+    hist(inf$df_inf$ph.6,xlab=name_par_inf[[5]],ylab="frequency",main=paste0("Histogram of ", name_par_inf[[5]]),
+         col=col_blue,cex.main = 2, cex.lab = 1.5, cex.axis = 1.5, freq = FALSE)
+	lines(x,y,lwd=3,col=col_green)
+    
+	x <- seq(0.00007, 0.00015, by = 0.000001)
+    y <- dnorm(x, mean = df_cycle[['freq']][6], sd = 0.2*df_cycle[['freq']][7])
+    hist(inf$df_inf$freq.6,xlab=name_par_inf[[6]],ylab="frequency",main=paste0("Histogram of ", name_par_inf[[6]]),
+         col=col_blue,cex.main = 2, cex.lab = 1.5, cex.axis = 1.5, freq = FALSE)
+	lines(x,y,lwd=3,col=col_green)
+		 
+	#xi histograms
+    hist(inf$df_inf$xi.10,xlab=name_par_inf[[7]],ylab="frequency",main=paste0("Histogram of ", name_par_inf[[7]]),
+         col=col_blue,cex.main = 2, cex.lab = 1.5, cex.axis = 1.5, freq = FALSE)
+	abline(v = median(inf$df_inf[[name_par_inf[7]]]), col = col_green, lty = 2, lwd = 2)
+	abline(v = inf$df$init[10], col = col_red, lty = 2, lwd = 2)
 
-    hist(par_inf$xi_mean,xlab=name_par_inf[[1]],ylab="counts",main=paste0("Histogram of ", name_par_inf[[1]]),
-         col=col_blue,cex.main = 2, cex.lab = 1.7, cex.axis = 1.5)
-    
-    hist(par_inf$xi_gamma,xlab=name_par_inf[[2]],ylab="counts",main=paste0("Histogram of ", name_par_inf[[2]]),
-         col=col_blue,cex.main = 2, cex.lab = 1.7, cex.axis = 1.5)
-    
-    hist(par_inf$xi_sd,xlab=name_par_inf[[3]],ylab="counts",main=paste0("Histogram of ", name_par_inf[[3]]),
-         col=col_blue,cex.main = 2, cex.lab = 1.7, cex.axis = 1.5)
-    
-    hist(par_inf$A.1,xlab=name_par_inf[[4]],ylab="counts",main=paste0("Histogram of ", name_par_inf[[4]]),
-         col=col_blue,cex.main = 2, cex.lab = 1.7, cex.axis = 1.5)
-    
-    hist(par_inf$ph.1,xlab=name_par_inf[[5]],ylab="counts",main=paste0("Histogram of ", name_par_inf[[5]]),
-         col=col_blue,cex.main = 2, cex.lab = 1.7, cex.axis = 1.5)
-    
-    hist(par_inf$freq.8,xlab=name_par_inf[[6]],ylab="counts",main=paste0("Histogram of ", name_par_inf[[6]]),
-         col=col_blue,cex.main = 2, cex.lab = 1.7, cex.axis = 1.5)
+    hist(inf$df_inf$xi.900,xlab=name_par_inf[[8]],ylab="frequency",main=paste0("Histogram of ", name_par_inf[[8]]),
+         col=col_blue,cex.main = 2, cex.lab = 1.5, cex.axis = 1.5, freq = FALSE)
+	abline(v = median(inf$df_inf[[name_par_inf[8]]]), col = col_green, lty = 2, lwd = 2)
+	abline(v = inf$df$init[900], col = col_red, lty = 2, lwd = 2)
+
+    hist(inf$df_inf$xi.1800,xlab=name_par_inf[[9]],ylab="frequency",main=paste0("Histogram of ", name_par_inf[[9]]),
+         col=col_blue,cex.main = 2, cex.lab = 1.5, cex.axis = 1.5, freq = FALSE)
+	abline(v = median(inf$df_inf[[name_par_inf[9]]]), col = col_green, lty = 2, lwd = 2)
+	abline(v = inf$df$init[1800], col = col_red, lty = 2, lwd = 2)
 		 
 	
 }
@@ -189,7 +239,7 @@ plot_chain_acf <- function(data_inf){
     for (i in 1:length(name_inf)){
 		par(mfrow = c(1,2))
 		plot(x_chain,data_inf[[name_inf[i]]],main=paste0("chain of", " ", name_inf[[i]]),
-             col=col_blue, type = "n", lwd = 2, cex.lab = 1.3)
+             col=col_blue, type = "n", lwd = 2, cex.lab = 1.3, xlab = '# of iterations', ylab = 'Value')
 		grid(nx = NULL, ny = NULL,
             lty = 2, col = col_grey, lwd = 1)
 		lines(x_chain,data_inf[[name_inf[i]]], type = "l", lty = 1, lwd = 4, col = col_blue)
@@ -221,7 +271,7 @@ plot_chain_all <- function(data_inf){
     for (i in 1:24){
 		par(mfrow = c(1,2))
 		plot(x_chain,data_inf[[name_inf[i]]],main=paste0("Markov chain of", " ", name_inf[[i]]),
-             col=col_blue, type = "n", lwd = 2, cex.lab = 1.3)
+             col=col_blue, type = "n", lwd = 2, cex.lab = 1.3, xlab = '# of iterations', ylab = 'Value')
 		grid(nx = NULL, ny = NULL,
             lty = 2, col = col_grey, lwd = 1)
 		lines(x_chain,data_inf[[name_inf[i]]], type = "l", lty = 1, lwd = 4, col = col_blue)
@@ -251,7 +301,7 @@ plot_freq<-function(data_inf){
         
 		par(mfrow = c(1,2))
 		plot(x_chain,data_inf[[name_inf[i]]],main=paste0("Markov chain of", " ", name_inf[[i]]),
-             col=col_blue, type = "n", lwd = 2, cex.lab = 1.3, ylab = "Inf freq [1/y]", xlab = "# Iterations")
+             col=col_blue, type = "n", lwd = 2, cex.lab = 1.3, ylab = "Inf freq [1/y]", xlab = "# of Iterations")
 		grid(nx = NULL, ny = NULL,
             lty = 2, col = col_grey, lwd = 1)
 		lines(x_chain,data_inf[[name_inf[i]]], type = "l", lty = 1, lwd = 4, col = col_blue)
@@ -260,15 +310,15 @@ plot_freq<-function(data_inf){
         abline(h = freq_i[i+5], col = "red", lty = 2, lwd = 3)
 		 
 		
-	    legend(x = 'bottomleft',
-			col = c(col_blue, "orange",col_green,"red"),
-			lty = c(1,1,2,2),
-			lwd = c(2,3,4,3),
-			cex=1.2,
-			xpd = TRUE,  # Enable plotting outside the plot region
-            inset = c(0, 0.05),  # Adjust the legend position using inset coordinates
-			bty="n",
-			legend = c('Markov chain ', 'Mean value ', 'Correct freq.', "Initial freq."))
+	    #legend(x = 'bottomleft',
+		#	col = c(col_blue, "orange",col_green,"red"),
+		#	lty = c(1,1,2,2),
+		#	lwd = c(2,3,4,3),
+		#	cex=1.2,
+		#	xpd = TRUE,  # Enable plotting outside the plot region
+        #   inset = c(0, 0.05),  # Adjust the legend position using inset coordinates
+		#	bty="n",
+		#	legend = c('Markov chain ', 'Mean value ', 'Correct freq.', "Initial freq."))
         
 				
 		# autocorrelation
