@@ -29,9 +29,6 @@ freq_hulk <- hulk_cycle$freq
 
 # timedeppar settings 
 
-
-
-
 n_iter <- 400000
 n_interval <- 20
 n_adapt <- 200000
