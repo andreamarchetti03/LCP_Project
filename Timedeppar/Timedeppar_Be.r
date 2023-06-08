@@ -51,13 +51,9 @@ loglikeli <- function(param, data) {
 logprior_ou <- function(param_ou) {
 
     # calculate log priors for the given parameters
-    #log_prior_mean <- dnorm(param_ou[['xi_mean']], mean =10, sd = 1, log = T)
-    #log_prior_sd <- dgamma(param_ou[['xi_sd']], shape = 5, rate = 1, log = T)
-    #log_prior_gamma <- dinvgamma(param_ou[['xi_gamma']], shape =1.25, rate = 0.125, log = T)
-    
-	log_prior_mean <- dnorm(param_ou[['xi_mean']], mean =10, sd = 1, log = T)
+    log_prior_mean <- dnorm(param_ou[['xi_mean']], mean =5, sd = 1, log = T)
     log_prior_sd <- dgamma(param_ou[['xi_sd']], shape = 5, rate = 1, log = T)
-    log_prior_gamma <- dinvgamma(param_ou[['xi_gamma']], shape =1.25, rate = 0.125, log = T)
+    log_prior_gamma <- dgamma(param_ou[['xi_gamma']], shape =2, rate = 100, log = T)
     
 	return(log_prior_mean + log_prior_sd + log_prior_gamma)
 }
@@ -70,15 +66,15 @@ logprior_const <- function(param_const) {
 	
 	log_prior_A <- 0
 	for (k in 1:n_cycle){
-		log_prior_A <- log_prior_A + dnorm(param_const[[paste0('A.',k)]], mean = df_cycle[['A']][k], sd = 0.2*df_cycle[['A']][k], log = T)
+		log_prior_A <- log_prior_A + dnorm(param_const[[paste0('A.',k)]], mean = df_cycle[['A']][k], sd = 0.3*df_cycle[['A']][k], log = T)
 	}	
 	log_prior_ph <- 0
 	for (k in 1:n_cycle){
-		log_prior_ph <- log_prior_ph + dnorm(param_const[[paste0('ph.',k)]], mean = df_cycle[['ph']][k] , sd = 0.2*df_cycle[['ph']][k], log = T)
+		log_prior_ph <- log_prior_ph + dnorm(param_const[[paste0('ph.',k)]], mean = df_cycle[['ph']][k] , sd = 0.1*df_cycle[['ph']][k], log = T)
 	}	
 	log_prior_freq <- 0
 	for (k in n_fix:n_cycle){
-		log_prior_freq <- log_prior_freq + dnorm(param_const[[paste0('freq.',k)]], mean = df_cycle[['freq']][k], sd = 0.2*df_cycle[['freq']][k], log = T)
+		log_prior_freq <- log_prior_freq + dnorm(param_const[[paste0('freq.',k)]], mean = df_cycle[['freq']][k], sd = 0.1*df_cycle[['freq']][k], log = T)
 	}	
     # return result
     return(log_prior_sigma_y + log_prior_A + log_prior_ph + log_prior_freq)
@@ -178,7 +174,7 @@ inference <- function(name, dname_df){
     # choose model parameters:
     xi_mean <- mean(df$init)
     xi_sd <- sd(df$init)
-    xi_gamma <- 1/10
+    xi_gamma <- 1/100
       
     #Perform Timedapper inference
     inf <- NULL
