@@ -160,25 +160,6 @@ plot_hist<-function(inf){
          col=col_blue,cex.main = 2, cex.lab = 1.5, cex.axis = 1.5, freq = FALSE,breaks = 20)
 	lines(x,y,lwd=3,col=col_green)
 
-	
-	#xi histograms
-    hist(inf$df_inf$xi.10,xlab=name_par_inf[[7]],ylab="counts",main=paste0("Histogram of ", name_par_inf[[7]]),
-         col=col_blue,cex.main = 2, cex.lab = 1.5, cex.axis = 1.5, freq = FALSE,breaks = 20)
-	abline(v = median(inf$df_inf[[name_par_inf[7]]]), col = col_green, lty = 2, lwd = 2)
-	abline(v = inf$df$init[10], col = col_red, lty = 2, lwd = 2)
-
-
-    hist(inf$df_inf$xi.250,xlab=name_par_inf[[8]],ylab="counts",main=paste0("Histogram of ", name_par_inf[[8]]),
-         col=col_blue,cex.main = 2, cex.lab = 1.5, cex.axis = 1.5, freq = FALSE,breaks = 20)
-	abline(v = median(inf$df_inf[[name_par_inf[8]]]), col = col_green, lty = 2, lwd = 2)
-	abline(v = inf$df$init[250], col = col_red, lty = 2, lwd = 2)
-
-
-    hist(inf$df_inf$xi.500,xlab=name_par_inf[[9]],ylab="counts",main=paste0("Histogram of ", name_par_inf[[9]]),
-         col=col_blue,cex.main = 2, cex.lab = 1.5, cex.axis = 1.5, freq = FALSE,breaks = 20)
-	abline(v = median(inf$df_inf[[name_par_inf[9]]]), col = col_green, lty = 2, lwd = 2)
-	abline(v = inf$df$init[500], col = col_red, lty = 2, lwd = 2)
-
 }
 
 
@@ -186,7 +167,7 @@ plot_chain_acf <- function(data_inf){
 
 	options(repr.plot.width = 11, repr.plot.height = 5)
     par(mar = c(5.1, 6.1, 4.1, 2.1))
-    name_inf = c("xi_mean","xi_gamma", "xi_sd", "sigma_y", "A", "ph", "xi.10", "xi.250", "xi.500")
+    name_inf = c("xi_mean","xi_gamma", "xi_sd", "sigma_y", "A", "ph")
 
 	l <-length(data_inf$xi_mean)
 	x_chain <- seq(1,l,1) 
