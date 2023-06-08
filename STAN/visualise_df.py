@@ -91,7 +91,7 @@ def time_diff(data, inference, from_, to_):
 
 	fit, year, t_mean, cycle = init(data, inference)
 	
-	dif  = t_mean - year
+	dif  = year - t_mean
 
 	xi = t_mean[1:] - t_mean[:-1]
 
@@ -100,6 +100,7 @@ def time_diff(data, inference, from_, to_):
 	default_params_1 = {
     'marker': '.',
     's': 15,
+    #'lw': 1
     }
 	
 	ax[0].scatter(year, dif, **default_params_1)
@@ -167,7 +168,6 @@ def marginal(data, inference):
 	'density' : True,
 	}
 
-
 	fig, ax = plt.subplots(2, 3, figsize=(15, 8))
 	
 	ax[0][0].hist(mean, **common_params); ax[0][0].set_title(r"$\mu$")
@@ -189,26 +189,32 @@ def marginal(data, inference):
 
 	# not a brilliant way for sure
 
+	# mu
 	x_min, x_max = ax[0][0].get_xlim()
 	x = np.linspace(x_min, x_max, 1000)
 	ax[0][0].plot(x, sp.stats.norm.pdf(x, loc=1, scale=0.1), **common_params_2)
 
+	# sd
 	x_min, x_max = ax[0][1].get_xlim()
 	x = np.linspace(x_min, x_max, 1000)
-	ax[0][1].plot(x, sp.stats.gamma.pdf(x, 1, scale=1), **common_params_2)
+	ax[0][1].plot(x, sp.stats.gamma.pdf(x, 1, scale=0.1), **common_params_2)
 
+	# tau
 	x_min, x_max = ax[0][2].get_xlim()
 	x = np.linspace(x_min, x_max, 1000)
-	ax[0][2].plot(x, sp.stats.norm.pdf(x, loc=100, scale=100), **common_params_2)
+	ax[0][2].plot(x, sp.stats.uniform.pdf(x, 0, 200), **common_params_2)
 
+	# A
 	x_min, x_max = ax[1][0].get_xlim()
 	x = np.linspace(x_min, x_max, 1000)
 	ax[1][0].plot(x, sp.stats.norm.pdf(x, loc=10, scale=2), **common_params_2)
 
+	# phi
 	x_min, x_max = ax[1][1].get_xlim()
 	x = np.linspace(x_min, x_max, 1000)
 	ax[1][1].plot(x, sp.stats.norm.pdf(x, loc=2, scale=1), **common_params_2)
 
+	# sigma_y
 	x_min, x_max = ax[1][2].get_xlim()
 	x = np.linspace(x_min, x_max, 1000)
 	ax[1][2].plot(x, sp.stats.gamma.pdf(x, 1, scale=1), **common_params_2)

@@ -8,7 +8,7 @@ library(timedeppar)
 library(invgamma)
 seed = 12345
 
-source('LCP_Project/Timedeppar/Visualization_Be.r')
+source('Visualization_Be.r')
 
 # define observational likelihood
 loglikeli <- function(param, data) {
@@ -55,7 +55,7 @@ logprior_ou <- function(param_ou) {
     log_prior_sd <- dgamma(param_ou[['xi_sd']], shape = 5, rate = 1, log = T)
     log_prior_gamma <- dgamma(param_ou[['xi_gamma']], shape =2, rate = 100, log = T)
     
-	return(log_prior_mean + log_prior_sd + log_prior_gamma)
+    return(log_prior_mean + log_prior_sd + log_prior_gamma)
 }
 
 # define priors for constant parameters
@@ -66,15 +66,15 @@ logprior_const <- function(param_const) {
 	
 	log_prior_A <- 0
 	for (k in 1:n_cycle){
-		log_prior_A <- log_prior_A + dnorm(param_const[[paste0('A.',k)]], mean = df_cycle[['A']][k], sd = 0.3*df_cycle[['A']][k], log = T)
+		log_prior_A <- log_prior_A + dnorm(param_const[[paste0('A.',k)]], mean = df_cycle[['A']][k], sd = 0.2*df_cycle[['A']][k], log = T)
 	}	
 	log_prior_ph <- 0
 	for (k in 1:n_cycle){
-		log_prior_ph <- log_prior_ph + dnorm(param_const[[paste0('ph.',k)]], mean = df_cycle[['ph']][k] , sd = 0.1*df_cycle[['ph']][k], log = T)
+		log_prior_ph <- log_prior_ph + dnorm(param_const[[paste0('ph.',k)]], mean = df_cycle[['ph']][k] , sd = 0.2*df_cycle[['ph']][k], log = T)
 	}	
 	log_prior_freq <- 0
 	for (k in n_fix:n_cycle){
-		log_prior_freq <- log_prior_freq + dnorm(param_const[[paste0('freq.',k)]], mean = df_cycle[['freq']][k], sd = 0.1*df_cycle[['freq']][k], log = T)
+		log_prior_freq <- log_prior_freq + dnorm(param_const[[paste0('freq.',k)]], mean = df_cycle[['freq']][k], sd = 0.2*df_cycle[['freq']][k], log = T)
 	}	
     # return result
     return(log_prior_sigma_y + log_prior_A + log_prior_ph + log_prior_freq)
@@ -103,6 +103,7 @@ inference <- function(name, dname_df){
 		param <- df$t[i]-df$t[i-1]
 		xi_init <- append(xi_init, param)
 	}
+
     df$init <- xi_init
     xi = df[,c('t','init')]     
     
@@ -134,9 +135,8 @@ inference <- function(name, dname_df){
 		
 	param_init <- list( 'xi' = xi ,'sigma_y' = 0.5)
 	param_init <- c(param_init, A, ph, freq)
-		
-    # ranges of constant parameters
-	param_range <- list('sigma_y' = c(0,2))
+	
+	#RANGES
 
 	# A parameters range
 	A_range <- NULL
@@ -162,14 +162,9 @@ inference <- function(name, dname_df){
 		freq_range <- append(freq_range, par_range) 
 	}
 	
-	# freq parameters range
-	xi_range <- NULL
-	for (i in 1:n_main) {
-		par_range <- list(c(0,20))
-		xi_range <- append(xi_range, par_range) 
-	}
+	param_range <- list('sigma_y' = c(0,2), 'xi' = c(0,30))
 	
-	param_range <- c(xi_range ,param_range, A_range, ph_range, freq_range)
+	param_range <- c(param_range, A_range, ph_range, freq_range)
     
     # choose model parameters:
     xi_mean <- mean(df$init)
