@@ -16,4 +16,4 @@ The Timedeppar fold for R code which includes:
 - 'Visualization' code to analyse the chains;
 These codes are  for the different series
 
-There is a Data fold which coontains all datasets.
+The Data fold which contains all datasets.
