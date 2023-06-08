@@ -19,6 +19,7 @@ from scipy.signal import welch
 from LCP_Project.STAN import stan_code
 from LCP_Project.STAN import vars
 
+from datetime import datetime
 
 
 def infer(file_name):
@@ -50,4 +51,16 @@ def infer(file_name):
 	fit = posterior.sample(num_chains=n_chains, num_samples=n_sample, num_warmup=n_warmup,
 	                       init=[{'A':vars.A_init, 'phi':vars.phi_init,
 	                              't':df_sim['t'].values}]*n_chains)
+
+	##### save fit to dataframe and write to csv file ######
+
+	DateTime = datetime.now().strftime("%d_%m_%H_%M")
+
+	name = 'fit_df_Syn' + DateTime + '_' + str(n_sample) + 'iter'
+
+	fit.to_frame().to_csv(name)
+
+	#### to import use 
+	# df_new = pd.read_csv(name, index_col='draws')
+
 	return fit, year, cycle
