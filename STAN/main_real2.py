@@ -1,4 +1,8 @@
+# main module to build the STAN model
+# and perform sampling given the timeseries
+
 # import libraries
+
 import numpy as np
 import pandas as pd
 import nest_asyncio
@@ -16,8 +20,6 @@ plt.rcParams['ytick.labelsize'] = 8
 from statsmodels.graphics.tsaplots import plot_acf
 from scipy.signal import welch
 
-#from LCP_Project.STAN import stan_code_real
-#from LCP_Project.STAN import vars_real
 from LCP_Project.STAN import stan_code_real2
 from LCP_Project.STAN import vars_real2
 
@@ -45,7 +47,6 @@ def infer(file_name):
 	n_warmup = vars_real2.n_warmup
 	n_sample = vars_real2.n_sample
 	
-	#code = stan_code_real.code
 	code = stan_code_real2.code
 
 	
@@ -66,8 +67,6 @@ def infer(file_name):
 			'N_fix':N_fix, 'N_inf':N_inf, 'N_waves':N_fix+N_inf, 'freq_init':frequencies_inf, 'err_freq_init':err_frequencies_inf, 
 			'A_init':amplitudes, 'err_A_init':err_amplitudes, 'phi_init':phases, 'err_phi_init':err_phases}
 
-	print("Se ti stampa questo, sta andando tutto bene")
-
 	# build the model
 	posterior = stan.build(code, data=data, random_seed=12345)
 	
@@ -81,7 +80,7 @@ def infer(file_name):
 
 	##### save fit to dataframe and write to csv file ######
 
-	DateTime = datetime.now().strftime("%d_%m")
+	DateTime = datetime.now().strftime("%d_%m_%H_%M")
 
 	name = 'fit_df_Be_' + DateTime + '_' + str(n_sample) + 'iter_mac'
 

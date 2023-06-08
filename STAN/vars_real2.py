@@ -1,8 +1,9 @@
+# module to import spectrum of data
+
 import numpy as np
 
-#crea arrays con periodi, ampiezze e fasi
-#leggendoli da Insu_cycles_final.txt
-file_name = "LCP_Project/Data/Be_cycles.txt"
+#import the data for initialization
+file_name = "Data/Be-10/Be_cycles.txt"
 
 data_load = np.loadtxt(file_name)
 
@@ -17,6 +18,6 @@ err_phases = data_load[:,5]
 dt = 4.873
 
 # sample from the model
-n_chains = 8 #4
-n_warmup = 3000 #2000
+n_chains = 4
+n_warmup = 2000
 n_sample = 4000

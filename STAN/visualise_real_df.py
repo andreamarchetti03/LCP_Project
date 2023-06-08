@@ -1,11 +1,21 @@
 # module to visualise things 
-# afer importing the csv with inferred parameters as csv
+# afer importing the csv with inferred parameters
 
 import matplotlib.pyplot as plt
 import numpy as np
+import scipy as sp
 from scipy.signal import welch
+from statsmodels.graphics.tsaplots import plot_acf
 
 from LCP_Project.STAN import vars_real2
+
+# set colors 
+col_red = '#E21B1B'   #red
+col_blue = '#1769E6'  #blue
+col_green = '#00D10A' #green
+col_orange = '#FFA500'  #orange
+
+cols = [col_red, col_blue, col_green, col_orange]
 
 # retrieve the necessary variables separately
 def init(data, df_inference):
@@ -22,7 +32,7 @@ def init(data, df_inference):
 	cycle = data_load[:len(t_mean),1]
 
 	# move the observed signal to have 0 mean
-	# as done to infer
+	# as done in inference
 	cycle = cycle - np.mean(cycle)
 
 	frequencies_fix = vars_real2.frequencies[0:6]  
@@ -53,14 +63,13 @@ def split(x, n_chains):
 
 ###############################################################################
 
-# main function	
-def visualise(data, inference, from_, to_, sparam):
+# main function	to visualise
+def visualise(data, inference, from_, to_): #, sparam):
 
 	signal(data, inference, from_, to_)
 	time_diff(data, inference, from_, to_)
-	#PSD(inference)
 	marginal(data, inference)
-	chains(data, inference, sparam)
+	#chains(data, inference, sparam)
 	
 
 def signal(data, inference, from_, to_):
@@ -94,8 +103,8 @@ def signal(data, inference, from_, to_):
 	plt.plot(t_mean[from_:to_],y[from_:to_],color="red", label="denoised")
 
 	plt.title("Signal")
-	plt.xlabel("Year")
-	plt.ylabel("Quantity")
+	plt.xlabel("Time [y]", fontsize=14)
+	plt.ylabel("$y_{sim}$", fontsize=14)
 	plt.legend()
 	plt.show()
 	
@@ -110,15 +119,23 @@ def time_diff(data, inference, from_, to_):
 
 	fig, ax = plt.subplots(1,2, figsize=(15,5))
 	
-	ax[0].scatter(year, dif)
-	ax[0].set_title("Original Time - Inferred Time")
-	ax[0].set_xlabel("Year")
-	ax[0].set_ylabel("Delta t")
+	default_params_1 = {
+    'marker': '.',
+    's': 15,
+    }
 	
-	ax[1].scatter(year[:-1], xi)
-	ax[1].set_title("Inferred Xi's")
-	ax[1].set_xlabel("Year")
-	ax[1].set_ylabel("Delta t")
+	ax[0].scatter(year, dif, **default_params_1)
+	ax[0].set_title("Time difference", fontsize=14)
+	ax[0].set_xlabel("Time [y]", fontsize=14)
+	ax[0].set_ylabel("$t - t_{inf}$", fontsize=14)
+	ax[0].grid(linewidth=0.5)
+
+	
+	ax[1].scatter(year[:-1], xi, **default_params_1)
+	ax[1].set_title(r"$\xi_i$", fontsize=14)
+	ax[1].set_xlabel("Index", fontsize=14)
+	ax[1].set_ylabel(r"$\xi_i$", fontsize=14)
+	ax[1].grid(linewidth=0.5)
 		
 
 def PSD(data, inference):
@@ -175,39 +192,114 @@ def marginal(data, inference):
 	A    = fit["A.1"]
 	phi  = fit["phi.1"]
 	sigma_y = fit["sigma_y"]
+
+	common_params = {
+    'edgecolor': 'black',
+    'alpha': 0.7,
+	'bins' : 20,
+	'color' : col_blue,
+	'density' : True,
+	}
 		
 	fig, ax = plt.subplots(3, 3, figsize=(15, 8))
 	
-	ax[0][0].hist(mean); ax[0][0].set_title("mean")
-	ax[0][1].hist(sd); ax[0][1].set_title("sd")
-	ax[0][2].hist(tau); ax[0][2].set_title("tau")
+	ax[0][0].hist(mean, **common_params); ax[0][0].set_title(r"$\mu$")
+	ax[0][1].hist(sd, **common_params); ax[0][1].set_title(r"$\sigma$")
+	ax[0][2].hist(tau, **common_params); ax[0][2].set_title(r"$\tau$")
 	
-	ax[1][0].hist(A); ax[1][0].set_title("A")
-	ax[1][1].hist(phi); ax[1][1].set_title("phi")
-	ax[1][2].hist(sigma_y); ax[1][2].set_title("sigma_y")
+	ax[1][0].hist(A, **common_params); ax[1][0].set_title(r"$A_1$")
+	ax[1][1].hist(phi, **common_params); ax[1][1].set_title(r"$\Phi_1$")
+	ax[1][2].hist(sigma_y, **common_params); ax[1][2].set_title(r"$\sigma_y$")
 
-	ax[2][0].hist(freq_inf); ax[2][0].set_title("freq_inf")
+	ax[2][0].hist(freq_inf, **common_params); ax[2][0].set_title(r"$freq inf_1$")
 
+###### SUPERIMPOSE THE PRIORS ######
+	
+	common_params_2 = {
+    'color' : col_green,
+	'lw' : 2
+	}
 
+	# not a brilliant way for sure
 
+	x_min, x_max = ax[0][0].get_xlim()
+	x = np.linspace(x_min, x_max, 1000)
+	ax[0][0].plot(x, sp.stats.norm.pdf(x, loc=5, scale=1), **common_params_2)
+
+	x_min, x_max = ax[0][1].get_xlim()
+	x = np.linspace(x_min, x_max, 1000)
+	ax[0][1].plot(x, sp.stats.gamma.pdf(x, 1, scale=1), **common_params_2)
+
+	x_min, x_max = ax[0][2].get_xlim()
+	x = np.linspace(x_min, x_max, 1000)
+	ax[0][2].plot(x, sp.stats.norm.pdf(x, loc=100, scale=40), **common_params_2)
+
+	x_min, x_max = ax[1][0].get_xlim()
+	x = np.linspace(x_min, x_max, 1000)
+	ax[1][0].plot(x, sp.stats.norm.pdf(x, loc=0.074, scale=0.0148), **common_params_2)
+
+	x_min, x_max = ax[1][1].get_xlim()
+	x = np.linspace(x_min, x_max, 1000)
+	ax[1][1].plot(x, sp.stats.norm.pdf(x, loc=3.42, scale=0.684), **common_params_2)
+
+	x_min, x_max = ax[1][2].get_xlim()
+	x = np.linspace(x_min, x_max, 1000)
+	ax[1][2].plot(x, sp.stats.gamma.pdf(x, 1, scale=1), **common_params_2)
+
+	x_min, x_max = ax[2][0].get_xlim()
+	x = np.linspace(x_min, x_max, 1000)
+	ax[1][1].plot(x, sp.stats.norm.pdf(x, loc=0.000112708, scale=0.000022542), **common_params_2)
 	
 	
 def chains(data, inference, sparam):
 
 	fit, year, t_mean, cycle, freq = init(data, inference)
-	n = 3 #var_real2.n_chains
+	n = vars_real2.n_chains
 	
 	param = fit[sparam]
 
 	param_chains = split(param, n)
-	
-	fig, ax = plt.subplots(1,1, figsize=(6,4))
-	
-	ax.set_title(sparam)
-	ax.set_xlabel("Iteration")
-	ax.set_ylabel("Value")
-	
+
+
+	fig, ax = plt.subplots(1,2, figsize=(15,5))
+
+
+###### PLOT THE CHAINS #####
+
+	default_params_1 = {
+    'x' : np.arange(0,vars.n_sample),
+    'marker': '.',
+    's': 5,
+    }
+
+    # modify the ax
+	ax[0].set(title=f'{sparam} chain', xlabel='Iteration', ylabel='Value')
+	ax[0].grid(linewidth=0.5)
+
 	for i in range(0,n):
-		
-		ax.scatter(np.arange(0,vars_real2.n_sample), param_chains[i])
+		ax[0].scatter(y = param_chains[i], **default_params_1, color=cols[i])
+        
+        
+###### PLOT THE AUTOCORRELATION ######
+
+	default_params_2 = {
+        'ax': ax[1],
+        'lags': len(param_chains[0]) - 1,
+        'alpha': None,
+        'use_vlines': False,
+        'bartlett_confint': False,
+        'marker': '.',
+        'markersize': 2
+    }
+
+	for i in range(0,n):
+		plot_acf(param_chains[i], **default_params_2, color=cols[i])
+
+    # modify the ax 
+	ax[1].set(title=f'{sparam} autocorrelation', xlabel='lags', ylabel='ACF Value', ylim=(-0.2, 0.2))
+	ax[1].grid(linewidth=0.5)
+    
+    # Add legend
+	legend_labels = [f'ACF chain {i+1}' for i in range(n)]
+	ax[1].legend(legend_labels, prop={'size': 12})
 		

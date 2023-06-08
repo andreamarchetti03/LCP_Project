@@ -12,7 +12,6 @@ data {
     vector[N_fix] freq_fix; //vector of fixed frequencies
 
     //total number of waves: sum of fixed and inferred
-    //can not declare?
     int<lower=0> N_waves;
 
     //initial values of frequencies, amplitudes and phases
@@ -45,29 +44,21 @@ parameters {
     
 }
 
-
+//define priors and likelihood
 model {
-
-    // try with normal
-    //retry with unif
-    /*mean ~ normal(10,0.5);
-    sd ~ normal(2.5, 2.5);
-    tau ~ normal(50,50); 
-    sigma_y ~ uniform(0, 10);
-    */
-    //for sd we can try with jeffrey's prior: 1/sd
-
+    
+    // prior for OU params
     mean ~ normal(5, 1);
     sd ~ gamma(1, 1);   
-    //tau ~ gamma(25, 0.025); //similar normal(2000, 300)
     tau ~ normal(100, 40);
+
+    // prior for constant params
     sigma_y ~ gamma(1, 1);
     
     //add priors for freq to infer
     for (j in 1:N_inf) {
         freq_inf[j] ~ normal(freq_init[j], 0.5*freq_init[j]);
     }
-    
 
     //add priors for A and phi (one for each component)
     for (j in 1:N_waves) {
@@ -75,7 +66,7 @@ model {
         phi[j] ~ normal(phi_init[j], 0.5*phi_init[j]);
     }
     
-    //adjust
+    // prior for times (OU process)
     t[1] ~ normal(304.47, 1);
     t[2] ~ normal(t[1] + mean, sd);
 
@@ -99,7 +90,8 @@ model {
 
     //initialize the mean_y values to zero
     for (i in 1:n) mean_y[i] = 0;
-
+    
+    // likelihood: superposition of cosine waves
     for(i in 1:n) {
     
         for (j in 1:N_waves) {
