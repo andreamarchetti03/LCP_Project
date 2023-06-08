@@ -3,7 +3,7 @@
 import numpy as np
 
 #import the data for initialization
-file_name = "Data/Be-10/Be_cycles.txt"
+file_name = "Data/Be_10/Be_cycles.txt"
 
 data_load = np.loadtxt(file_name)
 
