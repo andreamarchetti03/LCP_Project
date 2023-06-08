@@ -7,7 +7,7 @@ import scipy as sp
 from scipy.signal import welch
 from statsmodels.graphics.tsaplots import plot_acf
 
-from LCP_Project.STAN import vars_real2
+from Be-10 import vars_real2
 
 # set colors 
 col_red = '#E21B1B'   #red
