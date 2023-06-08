@@ -231,7 +231,7 @@ plot_chain_all <- function(data_inf){
 	x_chain<-seq(1,l,1) 
 	x_chain <- x_chain * 50
 	
-    for (i in 1:24){
+    for (i in 1:23){
 		par(mfrow = c(1,2))
 		plot(x_chain,data_inf[[name_inf[i]]],main=paste0("Markov chain of", " ", name_inf[[i]]),
              col=col_blue, type = "n", lwd = 2, cex.lab = 1.5, xlab = '# of iterations', ylab = 'Value')

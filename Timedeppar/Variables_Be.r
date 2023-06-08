@@ -10,11 +10,11 @@ col_grey <- '#C8CED0'  #gray
 n_main <- 1849
 
 # read cycle parameters
-df_cycle <- read.csv('LCP_Project/Timedeppar/Data/Be_cycles.txt', header = T, sep = '\t')
-corr_cycle <- read.csv('LCP_Project/Timedeppar/Data/corr_cycle.txt', header = T, sep = '\t')
+df_cycle <- read.csv('Data/Be_cycles.txt', header = T, sep = '\t')
+corr_cycle <- read.csv('Data/corr_cycle.txt', header = T, sep = '\t')
 
 
-df_corr<-read.csv('LCP_Project/Timedeppar/Data/Becorr.txt', header = T, sep = '\t')
+df_corr<-read.csv('Data/Becorr.txt', header = T, sep = '\t')
 df_corr$y_corr <- df_corr$y_corr-mean(df_corr$y_corr)
 
 
@@ -36,6 +36,9 @@ freq_corr <- corr_cycle$freq
 
 
 # timedeppar settings 
+
+
+
 
 n_iter <- 400000
 n_interval <- 20
