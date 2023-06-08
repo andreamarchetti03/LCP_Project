@@ -10,7 +10,7 @@ These codes are  for the different series
 
 
 The Timedeppar fold for R code which includes:
-- Model definition code;
+- Data fold with Data used;
 - 'Main' code to perform inference and save the chains;
 - 'Variables' code to import the data of the initial spectrum;
 - 'Visualization' code to analyse the chains;
