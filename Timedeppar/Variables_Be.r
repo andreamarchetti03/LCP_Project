@@ -11,11 +11,19 @@ n_main <- 1849
 
 # read cycle parameters
 df_cycle <- read.csv('LCP_Project/Timedeppar/Data/Be_cycles.txt', header = T, sep = '\t')
-hulk_cycle <- read.csv('LCP_Project/Timedeppar/Data/hulk_cycle.txt', header = T, sep = '\t')
+corr_cycle <- read.csv('LCP_Project/Timedeppar/Data/corr_cycle.txt', header = T, sep = '\t')
 
 
-df_hulk<-read.csv('LCP_Project/Timedeppar/Data/Becorr.txt', header = T, sep = '\t')
-df_hulk$y_d<-df_hulk$y_d-mean(df_hulk$y_d)
+df_corr<-read.csv('LCP_Project/Timedeppar/Data/Becorr.txt', header = T, sep = '\t')
+df_corr$y_corr <- df_corr$y_corr-mean(df_corr$y_corr)
+
+
+#Estimate denoised corrected data
+y_corr_d = rep(0, 1802)
+for(i in 1:13){
+	y_corr_d <- y_corr_d + corr_cycle$A[i]*cos(2*pi*corr_cycle$freq[i]*df_corr$t_inf + corr_cycle$ph[i])
+}
+df_corr$y_corr_d <- y_corr_d	
 
 n_cycle <- length(df_cycle$freq)
 df_cycle = df_cycle[1:n_cycle,]
@@ -23,7 +31,7 @@ n_fix <- 6
 
 #frequencies
 freq_i <- df_cycle$freq
-freq_hulk <- hulk_cycle$freq
+freq_corr <- corr_cycle$freq
 
 
 
