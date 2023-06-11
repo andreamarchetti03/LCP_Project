@@ -8,7 +8,7 @@ library(timedeppar)
 library(invgamma)
 seed = 12345
 
-source('LCP_Project/Timedeppar/Visualization_Be.r')
+source('Visualization_Be.r')
 
 # define observational likelihood
 loglikeli <- function(param, data) {
